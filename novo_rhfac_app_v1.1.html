@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Novo RHFAC Assessment Tool v1.1</title>
+<style>
+  /* ============================================================
+     Novo Industries Inc. — RHFAC Assessment Tool v1
+     Design: matches Novo document formatting rules
+     Colors: NAVY #1F3864 primary, TEAL #2E7D8F accent, AMBER #E8A33D warning, LGRN #D5E8D4 pass, LRED #F8CECC fail
+     Font: Arial, 12pt body minimum
+     ============================================================ */
+  :root {
+    --navy: #1F3864;
+    --teal: #2E7D8F;
+    --amber: #E8A33D;
+    --lgrn: #D5E8D4;
+    --lred: #F8CECC;
+    --ltel: #DAE8FC;
+    --bg: #F5F5F5;
+    --border: #CCCCCC;
+    --text: #111111;
+    --muted: #555555;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--text);
+    background: var(--bg);
+  }
+  body { min-height: 100vh; }
+  header {
+    background: var(--navy);
+    color: white;
+    padding: 12px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  header h1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  header .subtitle {
+    font-size: 13px;
+    opacity: 0.9;
+    margin-top: 2px;
+  }
+  nav.tabs {
+    background: white;
+    border-bottom: 2px solid var(--navy);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    padding: 8px 10px 0;
+    overflow-x: auto;
+  }
+  nav.tabs button {
+    background: #E9ECEF;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text);
+    white-space: nowrap;
+    border-radius: 6px 6px 0 0;
+  }
+  nav.tabs button.active {
+    background: var(--navy);
+    color: white;
+    font-weight: bold;
+  }
+  nav.tabs button:hover:not(.active) {
+    background: var(--ltel);
+  }
+  main {
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .panel {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+  .panel h2 {
+    color: var(--navy);
+    margin-top: 0;
+    font-size: 20px;
+    border-bottom: 2px solid var(--navy);
+    padding-bottom: 8px;
+  }
+  .panel h3 {
+    color: var(--navy);
+    font-size: 16px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 12px;
+  }
+  .field {
+    flex: 1;
+    min-width: 200px;
+  }
+  .field label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 4px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: inherit;
+    background: white;
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 60px;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--navy);
+    box-shadow: 0 0 0 2px rgba(31,56,100,0.15);
+  }
+  button.primary, button.secondary, button.danger {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: inherit;
+    margin-right: 8px;
+    margin-top: 4px;
+  }
+  button.primary {
+    background: var(--navy);
+    color: white;
+  }
+  button.primary:hover { background: #2A4A7C; }
+  button.secondary {
+    background: var(--teal);
+    color: white;
+  }
+  button.secondary:hover { background: #3B98AD; }
+  button.danger {
+    background: #B22222;
+    color: white;
+  }
+  button.danger:hover { background: #D32F2F; }
+  button.small {
+    padding: 5px 10px;
+    font-size: 12px;
+    margin-right: 4px;
+  }
+  .category-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .category-list li {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .category-list li:hover {
+    border-color: var(--navy);
+    background: var(--ltel);
+  }
+  .category-list li .cat-name {
+    font-weight: bold;
+    color: var(--navy);
+    flex: 1;
+    min-width: 200px;
+  }
+  .category-list li .cat-score {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .category-list li .cat-percent {
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+  }
+  .p-pass { background: var(--lgrn); color: #1A5D1A; }
+  .p-mod { background: #FFF2CC; color: #7A5700; }
+  .p-fail { background: var(--lred); color: #8B1A1A; }
+  .p-na { background: #E0E0E0; color: #555; }
+  .feature-row {
+    background: #FAFAFA;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+  .feature-row .feature-title {
+    font-weight: bold;
+    color: var(--navy);
+    margin-bottom: 4px;
+  }
+  .feature-row .feature-clause {
+    font-size: 12px;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 8px;
+  }
+  .feature-row .feature-guidance {
+    font-size: 13px;
+    color: var(--text);
+    background: var(--ltel);
+    padding: 8px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    border-left: 3px solid var(--navy);
+  }
+  .status-buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .status-buttons button {
+    padding: 6px 12px;
+    border: 2px solid var(--border);
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .status-buttons button.selected.pass { background: var(--lgrn); border-color: #1A5D1A; }
+  .status-buttons button.selected.marginal { background: #FFF2CC; border-color: #7A5700; }
+  .status-buttons button.selected.fail { background: var(--lred); border-color: #8B1A1A; }
+  .status-buttons button.selected.na { background: #E0E0E0; border-color: #555; font-style: italic; }
+  .summary-tile {
+    background: var(--ltel);
+    border-left: 4px solid var(--navy);
+    padding: 15px 20px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+  }
+  .summary-tile .big-number {
+    font-size: 36px;
+    font-weight: bold;
+    color: var(--navy);
+  }
+  .summary-tile .label {
+    font-size: 13px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+  }
+  table.score-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  table.score-table th, table.score-table td {
+    padding: 8px 10px;
+    text-align: left;
+    border: 1px solid var(--border);
+    font-size: 13px;
+  }
+  table.score-table th {
+    background: var(--navy);
+    color: white;
+    font-weight: bold;
+  }
+  table.score-table tr:nth-child(even) td { background: #FAFAFA; }
+  .save-indicator {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    background: var(--lgrn);
+    color: #1A5D1A;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 200;
+  }
+  .save-indicator.show { opacity: 1; }
+  #reportOutput {
+    background: white;
+    padding: 40px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 12pt;
+    line-height: 1.5;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  #reportOutput h1, #reportOutput h2, #reportOutput h3 {
+    color: var(--navy);
+  }
+  #reportOutput h1 { font-size: 20pt; border-bottom: 2px solid var(--navy); padding-bottom: 8px; }
+  #reportOutput h2 { font-size: 16pt; margin-top: 24px; }
+  #reportOutput h3 { font-size: 14pt; margin-top: 20px; }
+  #reportOutput table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+    font-size: 11pt;
+  }
+  #reportOutput table th, #reportOutput table td {
+    padding: 6px 8px;
+    text-align: left;
+    border: 1px solid var(--border);
+  }
+  #reportOutput table th {
+    background: var(--navy);
+    color: white;
+    font-weight: bold;
+  }
+  #reportOutput .report-header {
+    text-align: center;
+    border-bottom: 3px solid var(--navy);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+  }
+  #reportOutput .report-box {
+    background: #FAFAFA;
+    border: 1px solid var(--border);
+    padding: 12px 15px;
+    border-radius: 4px;
+    margin: 15px 0;
+  }
+  .hidden { display: none !important; }
+  .inline-label {
+    display: inline-block;
+    min-width: 140px;
+    font-weight: bold;
+    color: var(--muted);
+  }
+  .warning-box {
+    background: #FFF8E1;
+    border-left: 4px solid var(--amber);
+    padding: 12px 15px;
+    margin: 15px 0;
+    font-size: 14px;
+  }
+  .critical-box {
+    background: #FFEBEE;
+    border-left: 4px solid #B22222;
+    padding: 12px 15px;
+    margin: 15px 0;
+    font-size: 14px;
+    font-weight: bold;
+    color: #8B1A1A;
+  }
+  @media (max-width: 600px) {
+    main { padding: 10px; }
+    .panel { padding: 15px; }
+    nav.tabs button { padding: 6px 10px; font-size: 13px; }
+    header h1 { font-size: 16px; }
+  }
+  @media print {
+    header, nav.tabs, .no-print { display: none !important; }
+    main { padding: 0; }
+    .panel { box-shadow: none; border: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Novo Accessibility Assessment Tool</h1>
+  <div class="subtitle">RHFAC v4.0 Methodology · CSA/ASC B651:23 · Pre-Complaint Documentation Baseline</div>
+</header>
+
+<div class="save-indicator" id="saveIndicator">Saved</div>
+
+<nav class="tabs" id="tabNav">
+  <button class="active" data-tab="setup">1. Setup</button>
+  <button data-tab="assess">2. Assessment</button>
+  <button data-tab="remediation">3. Remediation</button>
+  <button data-tab="score">4. Score Summary</button>
+  <button data-tab="report">5. Generate Report</button>
+  <button data-tab="manage">Manage Data</button>
+</nav>
+
+<main>
+
+<!-- ==================== SETUP TAB ==================== -->
+<section id="tab-setup" class="tab-panel">
+  <div class="panel">
+    <h2>Facility Setup</h2>
+    <p style="color: var(--muted); font-size: 14px;">Complete these details before starting the assessment. All fields are editable throughout.</p>
+
+    <div class="row">
+      <div class="field">
+        <label for="facilityName">Facility Name</label>
+        <input type="text" id="facilityName" placeholder="e.g. Clearwater Public Library">
+      </div>
+      <div class="field">
+        <label for="facilityType">Facility Type</label>
+        <input type="text" id="facilityType" placeholder="e.g. Public Library, Recreation Centre">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="facilityMuni">Municipality</label>
+        <input type="text" id="facilityMuni" placeholder="e.g. Town of Clearwater, Alberta">
+      </div>
+      <div class="field">
+        <label for="facilityAddress">Address</label>
+        <input type="text" id="facilityAddress" placeholder="Street, City, Postal Code">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="facilityLevels">Levels / Size</label>
+        <input type="text" id="facilityLevels" placeholder="e.g. Two levels, 7,000 sq ft">
+      </div>
+      <div class="field">
+        <label for="facilityBuilt">Year Built / Renovated</label>
+        <input type="text" id="facilityBuilt" placeholder="e.g. Built 1997, Renovated 2009">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="assessmentDate">Assessment Date</label>
+        <input type="date" id="assessmentDate">
+      </div>
+      <div class="field">
+        <label for="assessorName">Assessor Name</label>
+        <input type="text" id="assessorName" value="Carl Christie">
+      </div>
+      <div class="field">
+        <label for="assessorCreds">Credentials</label>
+        <input type="text" id="assessorCreds" value="RHFAC Candidate">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="equipment">Equipment Used</label>
+        <input type="text" id="equipment" placeholder="e.g. Leica DISTO D2, inclinometer, dynamometer, lux meter">
+      </div>
+      <div class="field">
+        <label for="surveyVersion">Survey Version</label>
+        <input type="text" id="surveyVersion" value="RHFAC v4.0 (Sept 2024)">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label for="reportType">Report Type</label>
+        <select id="reportType">
+          <option value="municipal">Municipal — includes Next Dollar Impact + Council Summary</option>
+          <option value="private">Private Sector — general accessibility report, no capital planning section</option>
+          <option value="healthcare">Healthcare / Long-Term Care — clinical framing</option>
+          <option value="educational">Educational / Post-Secondary — campus capital framing</option>
+          <option value="general">General — no specific framing</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="clientContact">Primary Client Contact (optional)</label>
+        <input type="text" id="clientContact" placeholder="e.g. Director of Community Infrastructure">
+      </div>
+    </div>
+
+    <h3>Category Applicability</h3>
+    <p style="color: var(--muted); font-size: 13px;">Mark any categories Not Applicable. Categories 9 (Residential Units) and 10 (Trails) are often excluded for municipal buildings. N/A categories are skipped in scoring.</p>
+    <div id="applicabilityList"></div>
+  </div>
+</section>
+
+<!-- ==================== ASSESSMENT TAB ==================== -->
+<section id="tab-assess" class="tab-panel hidden">
+  <div class="panel">
+    <h2>Assessment by Category</h2>
+    <p style="color: var(--muted); font-size: 14px;">Tap a category to open it. Your progress saves automatically.</p>
+    <ul class="category-list" id="categoryList"></ul>
+  </div>
+
+  <div class="panel hidden" id="categoryDetail">
+    <button class="secondary" onclick="backToCategoryList()">← Back to Categories</button>
+    <h2 id="categoryDetailTitle"></h2>
+    <p id="categoryDetailDescription" style="color: var(--muted);"></p>
+    <div id="featureList"></div>
+  </div>
+</section>
+
+<!-- ==================== REMEDIATION TAB ==================== -->
+<section id="tab-remediation" class="tab-panel hidden">
+  <div class="panel">
+    <h2>Remediation Plan</h2>
+    <p style="color: var(--muted); font-size: 14px;">For each FAIL or MARGINAL finding, add cost estimate and priority. Life safety items are flagged automatically as Critical.</p>
+    <div id="remediationList"></div>
+    <div id="remediationSummary" style="margin-top: 20px;"></div>
+  </div>
+</section>
+
+<!-- ==================== SCORE TAB ==================== -->
+<section id="tab-score" class="tab-panel hidden">
+  <div class="panel">
+    <h2>NAI Score Summary</h2>
+    <div class="summary-grid" id="scoreTiles"></div>
+    <h3>Score by Category</h3>
+    <table class="score-table" id="scoreTable">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Category</th>
+          <th>Points Earned</th>
+          <th>Max Points</th>
+          <th>%</th>
+          <th>Primary Finding</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h2>Certification Pathway</h2>
+    <div id="certPathway"></div>
+  </div>
+</section>
+
+<!-- ==================== REPORT TAB ==================== -->
+<section id="tab-report" class="tab-panel hidden">
+  <div class="panel no-print">
+    <h2>Generate Novo Accessibility Assessment Report</h2>
+    <p style="color: var(--muted); font-size: 14px;">Review the report below. Use the buttons to copy it to clipboard or print it. For Word format, print to PDF first, then convert using any PDF-to-Word tool, or copy the content directly into a Word document.</p>
+    <button class="primary" onclick="buildReport()">Refresh Report</button>
+    <button class="secondary" onclick="copyReportToClipboard()">Copy Report to Clipboard</button>
+    <button class="secondary" onclick="window.print()">Print / Save as PDF</button>
+    <button class="secondary" onclick="exportReportAsWord()">Download as .doc</button>
+  </div>
+  <div id="reportOutput">
+    <p style="text-align: center; color: var(--muted); padding: 40px;">Click "Refresh Report" to generate.</p>
+  </div>
+</section>
+
+<!-- ==================== MANAGE TAB ==================== -->
+<section id="tab-manage" class="tab-panel hidden">
+  <div class="panel">
+    <h2>Manage Assessment Data</h2>
+    <p style="color: var(--muted); font-size: 14px;">Your assessment data is saved automatically in this browser. Use the tools below to back up, restore, or start a new assessment.</p>
+
+    <h3>Backup</h3>
+    <p>Download all assessment data as a JSON file. Keep this file safe in case your browser data is cleared.</p>
+    <button class="primary" onclick="exportData()">Download Backup File</button>
+
+    <h3>Restore</h3>
+    <p>Load a previously downloaded backup file.</p>
+    <input type="file" id="importFile" accept=".json" onchange="importData(event)">
+
+    <h3>New Assessment</h3>
+    <p style="color: #8B1A1A;">⚠️ Clears all current data and starts fresh. Make a backup first.</p>
+    <button class="danger" onclick="clearAllData()">Start New Assessment (Clear All)</button>
+
+    <h3>About This Tool</h3>
+    <div class="warning-box">
+      <strong>Novo RHFAC Assessment Tool v1.1</strong><br>
+      Built for Carl Christie, Novo Industries Inc. Uses RHFAC v4.0 Rating Survey methodology and CSA/ASC B651:23 standards. This tool produces assessment data and draft reports with a selectable report type (Municipal includes Next Dollar Impact; Private Sector, Healthcare, Educational, and General omit the capital pathway section). It does not submit to the RHFAC Registry. Registry submission remains a manual step through registry.rickhansen.com.<br><br>
+      Data is stored only in this browser's local storage. No data leaves your device. If you clear your browser data or switch devices without exporting a backup, your assessment data will be lost.
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ==================== SCRIPT ==================== -->
+<script>
+/* ============================================================
+   DATA MODEL — RHFAC v4.0 Categories and Features
+   Point allocations match the Clearwater sample format.
+   Each feature has:
+     id: unique identifier
+     code: clause reference (e.g. 1.1)
+     title: what is being assessed
+     clause: CSA B651:23 clause reference
+     required: what the standard requires
+     points: maximum points for this feature
+     guidance: brief guidance note for the assessor
+   ============================================================ */
+
+const CATEGORIES = [
+  {
+    id: 1, num: 1, name: "Vehicular Access", maxPoints: 75,
+    description: "Parking, drop-off, and transit access serving the facility.",
+    features: [
+      { id: "1.1.1", code: "1.1", title: "Accessible parking spaces — quantity", clause: "B651 §5.1.2", required: "Per required quantity table", points: 10, guidance: "Count designated accessible spaces. Confirm quantity meets CSA B651:23 Table 5.1 based on total parking spaces. Van-accessible space required if any." },
+      { id: "1.1.2", code: "1.1", title: "Parking space dimensions", clause: "B651 §5.1.4", required: "2,400mm wide minimum", points: 8, guidance: "Measure width of accessible parking including access aisle. Access aisle 1,525mm minimum." },
+      { id: "1.1.3", code: "1.1", title: "Parking surface", clause: "B651 §5.1.3", required: "Firm, stable, slip-resistant", points: 6, guidance: "Check for cracks, heave, loose gravel, or ponding. Asphalt, concrete, or sealed compacted surface required." },
+      { id: "1.1.4", code: "1.1", title: "Parking signage", clause: "B651 §5.1.5", required: "ISA present and visible", points: 6, guidance: "International Symbol of Access on vertical sign visible from approach. Pavement marking alone insufficient." },
+      { id: "1.1.5", code: "1.1", title: "Pedestrian pathway to entrance", clause: "B651 §5.1.6", required: "1,500mm minimum width", points: 10, guidance: "Measure narrowest point. Path must be unobstructed, firm, and stable." },
+      { id: "1.1.6", code: "1.1", title: "Curb ramp at parking exit", clause: "B651 §4.1.3", required: "Tactile warning at base, compliant slope", points: 8, guidance: "Check slope (8.33% max), tactile attention indicator at base, 1,500mm landing." },
+      { id: "1.1.7", code: "1.1", title: "Illumination at parking", clause: "B651 §5.1.9", required: "50 lux minimum", points: 5, guidance: "Measure with lux meter at pavement level after dark. Uniform illumination required." },
+      { id: "1.1.8", code: "1.1", title: "Pedestrian crossing markings", clause: "B651 §5.1.7", required: "Clearly marked", points: 4, guidance: "Check for worn or faded markings. Contrasting paint required at vehicle crossings on pedestrian route." },
+      { id: "1.1.9", code: "1.1", title: "Shelter over accessible spaces", clause: "B651 §5.1.10", required: "Recommended", points: 5, guidance: "Weather protection improves access. Not strictly required but scores apply to Gold level." },
+      { id: "1.2.1", code: "1.2", title: "Drop-off zone", clause: "B651 §5.1.8", required: "Pull-through zone adjacent to entrance", points: 7, guidance: "Must accommodate side-loading accessible vehicle. 6m minimum length, accessible curb cut." },
+      { id: "1.2.2", code: "1.2", title: "Public transit access", clause: "B651 §5.2.1", required: "Within 100m recommended", points: 6, guidance: "Nearest accessible transit stop within reasonable walking distance." }
+    ]
+  },
+  {
+    id: 2, num: 2, name: "Exterior Approach and Entrance", maxPoints: 197,
+    description: "Pathways, ramps, exterior stairs, and building entry.",
+    features: [
+      { id: "2.1.1", code: "2.1", title: "Exterior pathway — clear width", clause: "B651 §5.2.2", required: "1,500mm minimum", points: 15, guidance: "Measure narrowest point. Passing zones of 1,800mm every 30m required on long paths." },
+      { id: "2.1.2", code: "2.1", title: "Exterior pathway — surface", clause: "B651 §5.2.3", required: "Firm, stable, slip-resistant", points: 12, guidance: "No more than 13mm vertical change, no gaps greater than 13mm." },
+      { id: "2.1.3", code: "2.1", title: "Exterior pathway — cross slope", clause: "B651 §5.2.4", required: "Maximum 2%", points: 10, guidance: "Measure with digital inclinometer. Cross slope across path direction for drainage." },
+      { id: "2.2.1", code: "2.2", title: "Exterior ramp — running slope", clause: "B651 §6.4.4", required: "Maximum 8.33% (1:12)", points: 20, guidance: "Measure slope at multiple points along the ramp. Digital inclinometer most accurate." },
+      { id: "2.2.2", code: "2.2", title: "Exterior ramp — width", clause: "B651 §6.4.5", required: "1,500mm minimum between handrails", points: 15, guidance: "Measure clear width between handrail faces." },
+      { id: "2.2.3", code: "2.2", title: "Exterior ramp — landings", clause: "B651 §6.4.6", required: "1,500x1,500mm at top/bottom", points: 12, guidance: "Level landings at top, bottom, and every 9m of ramp length." },
+      { id: "2.2.4", code: "2.2", title: "Tactile warning — top of ramp", clause: "B651 §4.1.4", required: "Required", points: 10, guidance: "Detectable warning strip 600mm deep across full width." },
+      { id: "2.2.5", code: "2.2", title: "Ramp handrails — both sides", clause: "B651 §6.4.9", required: "865-965mm height, both sides", points: 15, guidance: "Both sides of ramp. Continuous along length with extensions." },
+      { id: "2.3.1", code: "2.3", title: "Exterior stairs — handrails", clause: "B651 §6.2.4", required: "Both sides present", points: 12, guidance: "Both sides of stairs. 300mm horizontal extensions at top and bottom." },
+      { id: "2.3.2", code: "2.3", title: "Exterior stairs — nosing contrast", clause: "B651 §6.2.3", required: "Contrasting nosing visible", points: 10, guidance: "50-75mm wide contrast strip on tread, visible from approach." },
+      { id: "2.4.1", code: "2.4", title: "Entrance door — clear width", clause: "B651 §5.7.1", required: "860mm minimum", points: 20, guidance: "Measure with door open 90°, from face of door to opposite stop." },
+      { id: "2.4.2", code: "2.4", title: "Entrance door — operating force", clause: "B651 §5.7.3", required: "38N maximum (interior), 22N exterior", points: 15, guidance: "Use dynamometer. Pull to open, peak force held. Measure on both doors of vestibule." },
+      { id: "2.4.3", code: "2.4", title: "Entrance door — hardware type", clause: "B651 §5.7.5", required: "Lever or loop required", points: 10, guidance: "Round knobs non-compliant. Lever handle or D-pull required. Operable with closed fist." },
+      { id: "2.4.4", code: "2.4", title: "Entrance door — power operator", clause: "B651 §5.7.6", required: "Recommended", points: 10, guidance: "Automatic door operator. Button at 900mm height, 1,500mm from door swing." },
+      { id: "2.4.5", code: "2.4", title: "Entrance vestibule — depth", clause: "B651 §5.7.7", required: "2,100mm clear between doors", points: 11, guidance: "Depth measured with both doors closed. Allows wheelchair user to clear first door before opening second." }
+    ]
+  },
+  {
+    id: 3, num: 3, name: "Interior Circulation", maxPoints: 312,
+    description: "Doors, corridors, stairs, elevators, and platform lifts.",
+    features: [
+      { id: "3.1.1", code: "3.1", title: "Interior doors — clear width", clause: "B651 §5.7.1", required: "860mm minimum", points: 20, guidance: "Measure all public-use doors. Doors to offices, washrooms, meeting rooms." },
+      { id: "3.1.2", code: "3.1", title: "Interior doors — operating force", clause: "B651 §5.7.3", required: "22N maximum", points: 15, guidance: "Interior door limit is lower than exterior. Use dynamometer." },
+      { id: "3.1.3", code: "3.1", title: "Interior doors — hardware", clause: "B651 §5.7.5", required: "Lever or loop", points: 10, guidance: "Check hardware on all public doors. Closets may be exempt." },
+      { id: "3.2.1", code: "3.2", title: "Path of travel — clear width", clause: "B651 §5.3.2", required: "1,500mm minimum", points: 25, guidance: "Measure narrowest point of public circulation. Furniture and displays often reduce this." },
+      { id: "3.2.2", code: "3.2", title: "Turning space provisions", clause: "B651 §5.3.3", required: "1,500mm diameter at key points", points: 20, guidance: "Check dead-end corridors, room entries, transaction areas." },
+      { id: "3.3.1", code: "3.3", title: "Corridors — clear width by floor", clause: "B651 §5.3.2", required: "1,500mm minimum", points: 25, guidance: "Measure each floor. Equipment storage often reduces width." },
+      { id: "3.3.2", code: "3.3", title: "Corridor cross-slope", clause: "B651 §5.3.4", required: "Maximum 2%", points: 15, guidance: "Check drainage slope on older buildings especially." },
+      { id: "3.4.1", code: "3.4", title: "Interior ramp — slope", clause: "B651 §6.4.4", required: "Maximum 8.33%", points: 20, guidance: "Applies to any interior grade change handled by ramp." },
+      { id: "3.5.1", code: "3.5", title: "Elevator — interior dimensions", clause: "B651 §5.4.3", required: "1,370x1,370mm minimum", points: 20, guidance: "Measure clear floor area. Older elevators often undersized." },
+      { id: "3.5.2", code: "3.5", title: "Elevator — door clear width", clause: "B651 §5.4.4", required: "900mm minimum", points: 15, guidance: "Measure with doors fully open." },
+      { id: "3.5.3", code: "3.5", title: "Elevator — control panel height", clause: "B651 §5.4.6", required: "1,200mm maximum highest button", points: 20, guidance: "Measure to top of highest operable button." },
+      { id: "3.5.4", code: "3.5", title: "Elevator — tactile and Braille", clause: "B651 §5.4.5", required: "Required on controls", points: 15, guidance: "Raised characters and Grade 2 Braille on all controls." },
+      { id: "3.5.5", code: "3.5", title: "Elevator — audio floor announcement", clause: "B651 §5.4.7", required: "Required", points: 15, guidance: "Verbal announcement at each floor stop. Check direction of travel indicator." },
+      { id: "3.5.6", code: "3.5", title: "Elevator — visual floor indicator", clause: "B651 §5.4.8", required: "Required inside car", points: 12, guidance: "Illuminated indicator showing current floor." },
+      { id: "3.5.7", code: "3.5", title: "Elevator — emergency communication", clause: "B651 §5.4.9", required: "Two-way, visual and audio", points: 15, guidance: "Emergency button with two-way communication. Visual indication of call received." },
+      { id: "3.6.1", code: "3.6", title: "Interior stairs — handrails both sides", clause: "B651 §6.2.4", required: "Required", points: 15, guidance: "865-965mm height. Continuous. Graspable diameter 32-51mm." },
+      { id: "3.6.2", code: "3.6", title: "Stair handrail extensions", clause: "B651 §6.2.5", required: "300mm minimum extension", points: 10, guidance: "Horizontal extension at top, sloped return at bottom." },
+      { id: "3.6.3", code: "3.6", title: "Stair nosings — contrast", clause: "B651 §6.2.3", required: "Contrasting nosing", points: 12, guidance: "50-75mm contrast strip on each tread." },
+      { id: "3.6.4", code: "3.6", title: "Stair treads and risers", clause: "B651 §6.2.1", required: "Uniform 280mm tread / 180mm riser typical", points: 10, guidance: "Measure multiple treads. Inconsistency is a hazard." },
+      { id: "3.7.1", code: "3.7", title: "Platform lift — where present", clause: "B651 §5.5", required: "Last-resort vertical access", points: 8, guidance: "Only applicable if a platform lift is installed. Mark N/A if none." }
+    ]
+  },
+  {
+    id: 4, num: 4, name: "Interior Services and Environment", maxPoints: 167,
+    description: "Service counters, self-service kiosks, seating, acoustics, lighting.",
+    features: [
+      { id: "4.1.1", code: "4.1", title: "Lobby — clear floor space", clause: "B651 §5.9.8", required: "1,500x1,500mm clear", points: 15, guidance: "Space for wheelchair turning inside main entry." },
+      { id: "4.2.1", code: "4.2", title: "Service counter — accessible height section", clause: "B651 §5.9.2", required: "760-865mm accessible section", points: 20, guidance: "At least one section of counter at accessible height with knee clearance." },
+      { id: "4.2.2", code: "4.2", title: "Service counter — knee clearance", clause: "B651 §5.9.3", required: "680mm ht, 480mm depth minimum", points: 18, guidance: "Under accessible section. Required for wheelchair user approach." },
+      { id: "4.2.3", code: "4.2", title: "Service counter — clear floor space", clause: "B651 §5.9.4", required: "800x1,350mm at counter", points: 15, guidance: "Forward approach space at accessible counter section." },
+      { id: "4.2.4", code: "4.2", title: "Self-service kiosk — reach height", clause: "B651 §5.9.5", required: "1,200mm maximum", points: 20, guidance: "Measure to highest operable control or screen centre." },
+      { id: "4.2.5", code: "4.2", title: "Self-service kiosk — accessible interface", clause: "B651 §5.9.6", required: "Audio output, tactile controls", points: 15, guidance: "Headphone jack, tactile keypad, or alternative interface for users with vision disability." },
+      { id: "4.3.1", code: "4.3", title: "Accessible seating at tables", clause: "B651 §5.10.3", required: "5% minimum", points: 15, guidance: "Tables with knee clearance for wheelchair users. 5% of seating minimum, 1 minimum." },
+      { id: "4.3.2", code: "4.3", title: "Seating variety", clause: "B651 §5.10.4", required: "Mix of heights and supports", points: 10, guidance: "Chairs with and without armrests. Firm seats at different heights." },
+      { id: "4.4.1", code: "4.4", title: "Drinking fountains — accessible", clause: "B651 §5.11.1", required: "Where provided, accessible height", points: 12, guidance: "One spout at 760-850mm, one at 915-1,070mm. Skip if no fountains." },
+      { id: "4.5.1", code: "4.5", title: "Acoustic environment", clause: "B651 §5.5.1", required: "Low background noise in service areas", points: 12, guidance: "HVAC, echo, background noise. Affects hearing aid users and hearing loop performance." },
+      { id: "4.6.1", code: "4.6", title: "Illumination — general areas", clause: "B651 §5.6.1", required: "200 lux minimum", points: 15, guidance: "Measure at 1m above floor in representative locations." }
+    ]
+  },
+  {
+    id: 5, num: 5, name: "Sanitary Facilities", maxPoints: 212,
+    description: "Washrooms, stalls, grab bars, and universal washrooms.",
+    features: [
+      { id: "5.1.1", code: "5.1", title: "Accessible washroom — location", clause: "B651 §7.1", required: "On accessible floor, near main use areas", points: 15, guidance: "Accessible washroom must be on accessible route from main entrance." },
+      { id: "5.1.2", code: "5.1", title: "Washroom door — clear width", clause: "B651 §5.7.1", required: "860mm minimum", points: 15, guidance: "Includes approach to washroom. Account for door swing." },
+      { id: "5.1.3", code: "5.1", title: "Washroom — turning radius", clause: "B651 §7.2.2", required: "1,500mm diameter clear", points: 20, guidance: "Measure with all doors closed and all equipment in place." },
+      { id: "5.1.4", code: "5.1", title: "Accessible stall — dimensions", clause: "B651 §7.3.1", required: "1,700x1,500mm minimum", points: 20, guidance: "Standard accessible stall. Universal washroom has separate larger requirement." },
+      { id: "5.1.5", code: "5.1", title: "Grab bar — rear wall", clause: "B651 §7.3.3", required: "840-920mm height, 600mm minimum length", points: 18, guidance: "Measure to top of bar. Critical for transfer support." },
+      { id: "5.1.6", code: "5.1", title: "Grab bar — side wall", clause: "B651 §7.3.4", required: "840-920mm height, 600mm minimum length", points: 18, guidance: "Transfer side. Often missing in older washrooms." },
+      { id: "5.1.7", code: "5.1", title: "Toilet seat height", clause: "B651 §7.3.2", required: "430-480mm to top of seat", points: 15, guidance: "Measure floor to top of seat. Elevated seats available." },
+      { id: "5.1.8", code: "5.1", title: "Toilet paper dispenser — location", clause: "B651 §7.3.5", required: "Reachable from seated position", points: 8, guidance: "Within arm reach of toilet, does not obstruct grab bar." },
+      { id: "5.1.9", code: "5.1", title: "Sink — height and knee clearance", clause: "B651 §7.5.1", required: "Max 865mm height, knee clearance required", points: 15, guidance: "Lavatory with insulated pipes, no cabinet below, knee clearance 685mm high x 480mm deep." },
+      { id: "5.1.10", code: "5.1", title: "Faucet controls", clause: "B651 §7.5.2", required: "Lever or sensor", points: 10, guidance: "No rotating knobs. Single-lever, cross-handle, or automatic." },
+      { id: "5.1.11", code: "5.1", title: "Mirror — height", clause: "B651 §7.5.3", required: "Bottom edge at 1,000mm maximum", points: 10, guidance: "Usable from seated position. Full-length mirror 1,000-1,900mm acceptable." },
+      { id: "5.1.12", code: "5.1", title: "Paper towel / hand dryer — height", clause: "B651 §7.5.4", required: "1,200mm maximum reach", points: 10, guidance: "Operable control at reachable height." },
+      { id: "5.2.1", code: "5.2", title: "Ambulatory stall — provided", clause: "B651 §7.3.6", required: "Where multi-stall washrooms present", points: 10, guidance: "Narrower accessible stall for users who can walk but need grab bars." },
+      { id: "5.3.1", code: "5.3", title: "Universal washroom — provided", clause: "B651 §7.4.1", required: "Required for Gold certification", points: 28, guidance: "Separate larger single-user washroom with adult change table capable." }
+    ]
+  },
+  {
+    id: 6, num: 6, name: "Wayfinding and Signage", maxPoints: 84,
+    description: "Directional signage, room ID, Braille, tactile indicators.",
+    features: [
+      { id: "6.1.1", code: "6.1", title: "Accessible entrance symbol", clause: "B651 §4.2.1", required: "ISA at accessible entrances", points: 8, guidance: "Visible from approach path. Illuminated sign preferred." },
+      { id: "6.1.2", code: "6.1", title: "Directional signage — accessible washroom", clause: "B651 §4.2.5", required: "Visible from decision points", points: 10, guidance: "Clear wayfinding from entry to washroom without asking staff." },
+      { id: "6.1.3", code: "6.1", title: "Tactile attention indicators — entry", clause: "B651 §4.1.4", required: "At key decision points", points: 15, guidance: "Detectable warning domes at doors, junctions, top of stairs." },
+      { id: "6.2.1", code: "6.2", title: "Room ID signs — Braille", clause: "B651 §4.2.3", required: "At all permanent rooms", points: 15, guidance: "Grade 2 Braille. Not just decorative meeting rooms." },
+      { id: "6.2.2", code: "6.2", title: "Room ID signs — tactile characters", clause: "B651 §4.2.3", required: "Raised 0.8mm minimum", points: 12, guidance: "Raised letters and numbers readable by touch." },
+      { id: "6.2.3", code: "6.2", title: "Room ID signs — mounting height", clause: "B651 §4.2.4", required: "1,370-1,675mm centre", points: 8, guidance: "Measured to centre of sign. Latch side of door where possible." },
+      { id: "6.2.4", code: "6.2", title: "Room ID signs — character size", clause: "B651 §4.2.2", required: "16mm minimum upper case", points: 6, guidance: "Sans serif font, good contrast." },
+      { id: "6.3.1", code: "6.3", title: "Directory board at entry", clause: "B651 §4.2.6", required: "Visual directory", points: 10, guidance: "Building directory near entrance. Tactile directory for Gold certification." }
+    ]
+  },
+  {
+    id: 7, num: 7, name: "Emergency Systems", maxPoints: 70,
+    description: "Emergency exits, visual fire alarms, areas of rescue.",
+    critical: true,
+    features: [
+      { id: "7.1.1", code: "7.1", title: "Emergency exit door hardware", clause: "B651 §5.7.4", required: "Panic hardware, operable with closed fist", points: 10, guidance: "Panic bar on all emergency exits. Operable without grasping or twisting." },
+      { id: "7.1.2", code: "7.1", title: "Emergency exit door — clear width", clause: "B651 §5.7.1", required: "860mm minimum", points: 10, guidance: "Measure each emergency exit door." },
+      { id: "7.1.3", code: "7.1", title: "Area of rescue assistance", clause: "B651 §3.3.4.2", required: "Required at each floor with elevator as only vertical access", points: 20, guidance: "CRITICAL LIFE SAFETY. Designated safe waiting area with two-way communication for evacuation. Often missing in older buildings." },
+      { id: "7.2.1", code: "7.2", title: "Visual fire alarms — all levels", clause: "B651 §8.3.3.1", required: "Required in all occupied spaces", points: 15, guidance: "CRITICAL LIFE SAFETY. Strobes in washrooms, hallways, assembly spaces. Persons with hearing disability require visual alert." },
+      { id: "7.3.1", code: "7.3", title: "Evacuation instructions — posted", clause: "B651 §3.3.4.4", required: "At all stairwells, both levels", points: 8, guidance: "Floor identification, stair number, direction to exit." },
+      { id: "7.3.2", code: "7.3", title: "Exit signage — visual contrast", clause: "B651 §3.3.4.5", required: "High contrast, illuminated", points: 7, guidance: "Illuminated exit signs on all emergency routes." }
+    ]
+  },
+  {
+    id: 8, num: 8, name: "Additional Use of Spaces", maxPoints: 70,
+    description: "Specific spaces such as offices, exhibit spaces, libraries, gyms, assembly.",
+    features: [
+      { id: "8.1.1", code: "8.1", title: "Office workstations — accessible height", clause: "B651 §5.9.2", required: "Some adjustable or accessible desks", points: 12, guidance: "Adjustable height desks or accessible workstations for employees with disabilities." },
+      { id: "8.3.1", code: "8.3", title: "Exhibit spaces — route width", clause: "B651 §5.3.2", required: "1,500mm at display walls", points: 10, guidance: "Museums, galleries, display areas." },
+      { id: "8.3.2", code: "8.3", title: "Exhibit spaces — tactile access", clause: "B651 §8.3.2", required: "Where applicable", points: 8, guidance: "Tactile exhibits, audio descriptions, accessible formats." },
+      { id: "8.5.1", code: "8.5", title: "Assembly — accessible seating", clause: "B651 §5.10.2", required: "1% minimum wheelchair spaces", points: 10, guidance: "Theatre, auditorium, lecture hall accessible seats." },
+      { id: "8.5.2", code: "8.5", title: "Assembly — hearing assistance", clause: "B651 §8.2.1", required: "Hearing loop or FM system", points: 10, guidance: "Required in assembly spaces of 50 or more." },
+      { id: "8.21.1", code: "8.21", title: "Library — accessible stacks aisle", clause: "B651 §5.3.2", required: "1,500mm clear aisle", points: 10, guidance: "Between book stacks. Often narrower than minimum." },
+      { id: "8.21.2", code: "8.21", title: "Library — accessible catalogue and service", clause: "B651 §5.9.5", required: "Reachable terminals", points: 10, guidance: "Catalog computers accessible, service desk has accessible section." }
+    ]
+  },
+  {
+    id: 9, num: 9, name: "Residential Units", maxPoints: 330,
+    description: "Accessible residential unit features. Often N/A for municipal non-residential buildings.",
+    features: [
+      { id: "9.1.1", code: "9.1", title: "Unit entrance — approach and door", clause: "B651 §9.1", required: "Accessible approach and entry", points: 30, guidance: "Accessible route from parking, accessible door." },
+      { id: "9.2.1", code: "9.2", title: "Unit circulation", clause: "B651 §9.2", required: "Accessible paths through unit", points: 40, guidance: "1,070mm minimum halls, turning spaces." },
+      { id: "9.3.1", code: "9.3", title: "Unit kitchen", clause: "B651 §9.3", required: "Accessible counter, appliances", points: 80, guidance: "Accessible counter heights, knee clearance, reachable controls." },
+      { id: "9.4.1", code: "9.4", title: "Unit bathroom", clause: "B651 §9.4", required: "Accessible bathroom features", points: 80, guidance: "Accessible shower, grab bars, accessible vanity." },
+      { id: "9.5.1", code: "9.5", title: "Unit bedroom", clause: "B651 §9.5", required: "Adequate turning space", points: 40, guidance: "1,500mm turning space at bed." },
+      { id: "9.6.1", code: "9.6", title: "Unit storage and controls", clause: "B651 §9.6", required: "Reachable controls and storage", points: 60, guidance: "Thermostat, switches, closet at accessible heights." }
+    ]
+  },
+  {
+    id: 10, num: 10, name: "Trails and Pathways", maxPoints: 150,
+    description: "Outdoor trails and designated pathway systems. Often N/A for urban facilities.",
+    features: [
+      { id: "10.1.1", code: "10.1", title: "Trail — surface and width", clause: "B651 §10.1", required: "Firm, stable, 1,500mm wide", points: 40, guidance: "Applies to designated accessible trails." },
+      { id: "10.1.2", code: "10.1", title: "Trail — slope and grade", clause: "B651 §10.2", required: "8.33% maximum", points: 30, guidance: "Running slope consistent with ramp requirements." },
+      { id: "10.2.1", code: "10.2", title: "Trail — rest areas", clause: "B651 §10.3", required: "Every 30m recommended", points: 25, guidance: "Seating or resting area along trail." },
+      { id: "10.3.1", code: "10.3", title: "Trail — wayfinding", clause: "B651 §10.4", required: "Tactile and visual signage", points: 25, guidance: "Directional signage, distance markers." },
+      { id: "10.4.1", code: "10.4", title: "Trail — hazard warnings", clause: "B651 §10.5", required: "Detectable warnings at hazards", points: 30, guidance: "Steep grades, water edges, roadway crossings." }
+    ]
+  },
+  {
+    id: 11, num: 11, name: "Mind-Friendly Environments", maxPoints: 30,
+    description: "Sensory accessibility for cognitive, mental health, and neurological differences.",
+    features: [
+      { id: "11.1.1", code: "11.1", title: "Space — clear wayfinding and legibility", clause: "v4.0 §11.1", required: "Clear visual path", points: 8, guidance: "Uncluttered layout, logical flow, clear sight lines." },
+      { id: "11.1.2", code: "11.1", title: "Sensory-reduced areas", clause: "v4.0 §11.1", required: "Quiet or sensory-reduced space provided", points: 6, guidance: "Dedicated quiet area or room for sensory regulation." },
+      { id: "11.2.1", code: "11.2", title: "Adjustable lighting", clause: "v4.0 §11.2", required: "Dimmable or varied lighting zones", points: 6, guidance: "Avoid uniform fluorescent glare. Options matter." },
+      { id: "11.2.2", code: "11.2", title: "Acoustic zoning", clause: "v4.0 §11.2", required: "Noise separation between activity zones", points: 5, guidance: "Quiet zones acoustically separated from busy areas." },
+      { id: "11.3.1", code: "11.3", title: "Restoration — outdoor views and daylight", clause: "v4.0 §11.3", required: "Natural light and views encouraged", points: 5, guidance: "Windows to outdoors in public and work spaces." }
+    ]
+  },
+  {
+    id: 12, num: 12, name: "Technology and Innovation", maxPoints: 42,
+    description: "Assistive technology, website accessibility, innovative accessibility features.",
+    features: [
+      { id: "12.1.1", code: "12.1", title: "Hearing loop — service desk", clause: "v4.0 §12.1", required: "At primary service points", points: 8, guidance: "T-coil compatible induction loop, operational." },
+      { id: "12.1.2", code: "12.1", title: "Assistive listening system — meeting spaces", clause: "v4.0 §12.1", required: "In meeting and assembly spaces", points: 6, guidance: "FM system or equivalent, portable acceptable if trained staff available." },
+      { id: "12.2.1", code: "12.2", title: "Website — WCAG 2.1 Level AA", clause: "v4.0 §12.2", required: "AA compliance recommended", points: 10, guidance: "Alt text, colour contrast, keyboard navigation, screen reader compatibility." },
+      { id: "12.2.2", code: "12.2", title: "Website — accessibility information", clause: "v4.0 §12.2", required: "Information about site accessibility", points: 6, guidance: "Accessible entrance location, parking, washroom info on website." },
+      { id: "12.3.1", code: "12.3", title: "Innovation — accessible programming", clause: "v4.0 §12.3", required: "Innovative accessibility features", points: 6, guidance: "Tactile story time, sensory programs, accessible events." },
+      { id: "12.3.2", code: "12.3", title: "Innovation — technology aids", clause: "v4.0 §12.3", required: "Available on request", points: 6, guidance: "Screen readers, magnifiers, communication boards available." }
+    ]
+  }
+];
+
+const STATUS_POINT_MULTIPLIERS = {
+  "PASS": 1.0,
+  "MARGINAL": 0.5,
+  "FAIL": 0.0,
+  "NA": null
+};
+
+const CERT_THRESHOLDS = {
+  certified: 0.60,
+  gold: 0.80
+};
+
+/* ============================================================
+   STATE MANAGEMENT
+   ============================================================ */
+let state = loadState();
+
+function defaultState() {
+  return {
+    version: "1.0",
+    savedAt: null,
+    setup: {
+      facilityName: "",
+      facilityType: "",
+      facilityMuni: "",
+      facilityAddress: "",
+      facilityLevels: "",
+      facilityBuilt: "",
+      assessmentDate: new Date().toISOString().substr(0, 10),
+      assessorName: "Carl Christie",
+      assessorCreds: "RHFAC Candidate",
+      equipment: "Leica DISTO D2, inclinometer, dynamometer, lux meter",
+      surveyVersion: "RHFAC v4.0 (Sept 2024)",
+      reportType: "municipal",
+      clientContact: "",
+      categoryApplicable: Object.fromEntries(CATEGORIES.map(c => [c.id, c.id !== 9 && c.id !== 10]))
+    },
+    features: {}, // keyed by feature.id
+    remediation: {}, // keyed by feature.id
+    currentCategory: null
+  };
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem("novoRhfacState");
+    if (!raw) return defaultState();
+    const parsed = JSON.parse(raw);
+    if (!parsed.version) return defaultState();
+    return parsed;
+  } catch (e) {
+    console.warn("Failed to load state, starting fresh", e);
+    return defaultState();
+  }
+}
+
+function saveState() {
+  state.savedAt = new Date().toISOString();
+  try {
+    localStorage.setItem("novoRhfacState", JSON.stringify(state));
+    showSaveIndicator();
+  } catch (e) {
+    alert("Warning: Could not save to browser storage. Your data may not persist. Error: " + e.message);
+  }
+}
+
+function showSaveIndicator() {
+  const el = document.getElementById("saveIndicator");
+  el.classList.add("show");
+  clearTimeout(window._saveTimer);
+  window._saveTimer = setTimeout(() => el.classList.remove("show"), 1200);
+}
+
+/* ============================================================
+   TAB NAVIGATION
+   ============================================================ */
+document.querySelectorAll("nav.tabs button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll("nav.tabs button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    document.querySelectorAll(".tab-panel").forEach(p => p.classList.add("hidden"));
+    document.getElementById("tab-" + tab).classList.remove("hidden");
+    window.scrollTo(0, 0);
+    // refresh tab content on switch
+    if (tab === "assess") renderCategoryList();
+    if (tab === "remediation") renderRemediation();
+    if (tab === "score") renderScore();
+    if (tab === "manage") {} // nothing
+  });
+});
+
+/* ============================================================
+   SETUP TAB
+   ============================================================ */
+function renderSetup() {
+  const s = state.setup;
+  document.getElementById("facilityName").value = s.facilityName || "";
+  document.getElementById("facilityType").value = s.facilityType || "";
+  document.getElementById("facilityMuni").value = s.facilityMuni || "";
+  document.getElementById("facilityAddress").value = s.facilityAddress || "";
+  document.getElementById("facilityLevels").value = s.facilityLevels || "";
+  document.getElementById("facilityBuilt").value = s.facilityBuilt || "";
+  document.getElementById("assessmentDate").value = s.assessmentDate || "";
+  document.getElementById("assessorName").value = s.assessorName || "";
+  document.getElementById("assessorCreds").value = s.assessorCreds || "";
+  document.getElementById("equipment").value = s.equipment || "";
+  document.getElementById("surveyVersion").value = s.surveyVersion || "";
+  document.getElementById("reportType").value = s.reportType || "municipal";
+  document.getElementById("clientContact").value = s.clientContact || "";
+
+  // Applicability checklist
+  const applicabilityList = document.getElementById("applicabilityList");
+  applicabilityList.innerHTML = "";
+  CATEGORIES.forEach(c => {
+    const div = document.createElement("div");
+    div.style.marginBottom = "6px";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.id = "app_" + c.id;
+    cb.checked = s.categoryApplicable[c.id] !== false;
+    cb.addEventListener("change", () => {
+      state.setup.categoryApplicable[c.id] = cb.checked;
+      saveState();
+    });
+    const label = document.createElement("label");
+    label.htmlFor = "app_" + c.id;
+    label.innerHTML = " Category " + c.num + ": " + c.name + " <span style='color:#555;font-size:12px;'>(" + c.maxPoints + " pts max)</span>";
+    label.style.marginLeft = "6px";
+    label.style.cursor = "pointer";
+    label.style.fontWeight = "normal";
+    div.appendChild(cb);
+    div.appendChild(label);
+    applicabilityList.appendChild(div);
+  });
+
+  // Attach input listeners for setup fields
+  ["facilityName","facilityType","facilityMuni","facilityAddress","facilityLevels","facilityBuilt","assessmentDate","assessorName","assessorCreds","equipment","surveyVersion","reportType","clientContact"].forEach(f => {
+    const el = document.getElementById(f);
+    el.addEventListener("input", () => {
+      state.setup[f] = el.value;
+      saveState();
+    });
+  });
+}
+
+/* ============================================================
+   ASSESSMENT TAB — CATEGORY LIST
+   ============================================================ */
+function renderCategoryList() {
+  document.getElementById("categoryDetail").classList.add("hidden");
+  const list = document.getElementById("categoryList");
+  list.innerHTML = "";
+  CATEGORIES.forEach(c => {
+    const applicable = state.setup.categoryApplicable[c.id] !== false;
+    const { earned, max, completed, total } = categoryProgress(c);
+    const pct = max > 0 ? Math.round((earned / max) * 100) : 0;
+    const li = document.createElement("li");
+    li.addEventListener("click", () => openCategory(c.id));
+
+    const name = document.createElement("div");
+    name.className = "cat-name";
+    name.textContent = "Category " + c.num + " — " + c.name;
+    if (c.critical) {
+      const flag = document.createElement("span");
+      flag.textContent = " 🚨";
+      flag.title = "Contains critical life safety items";
+      name.appendChild(flag);
+    }
+    li.appendChild(name);
+
+    const score = document.createElement("div");
+    score.className = "cat-score";
+    if (!applicable) {
+      score.textContent = "Not Applicable";
+    } else {
+      score.textContent = earned + " / " + max + " pts · " + completed + " of " + total + " items assessed";
+    }
+    li.appendChild(score);
+
+    const percent = document.createElement("div");
+    if (!applicable) {
+      percent.className = "cat-percent p-na";
+      percent.textContent = "N/A";
+    } else if (completed === 0) {
+      percent.className = "cat-percent p-na";
+      percent.textContent = "Not Started";
+    } else if (pct >= 80) {
+      percent.className = "cat-percent p-pass";
+      percent.textContent = pct + "%";
+    } else if (pct >= 50) {
+      percent.className = "cat-percent p-mod";
+      percent.textContent = pct + "%";
+    } else {
+      percent.className = "cat-percent p-fail";
+      percent.textContent = pct + "%";
+    }
+    li.appendChild(percent);
+
+    list.appendChild(li);
+  });
+}
+
+function categoryProgress(category) {
+  let earned = 0, max = 0, completed = 0;
+  const total = category.features.length;
+  category.features.forEach(f => {
+    const data = state.features[f.id];
+    if (!data) return;
+    if (data.status === "NA") {
+      completed++;
+      return;
+    }
+    max += f.points;
+    const mult = STATUS_POINT_MULTIPLIERS[data.status];
+    if (mult === null || mult === undefined) return;
+    earned += f.points * mult;
+    completed++;
+  });
+  // For display, show total possible max from features not yet assessed too
+  let displayMax = 0;
+  category.features.forEach(f => {
+    const data = state.features[f.id];
+    if (data && data.status === "NA") return;
+    displayMax += f.points;
+  });
+  return { earned: Math.round(earned), max: displayMax, completed, total };
+}
+
+function openCategory(catId) {
+  state.currentCategory = catId;
+  const category = CATEGORIES.find(c => c.id === catId);
+  document.getElementById("categoryList").parentElement.classList.add("hidden");
+  const detail = document.getElementById("categoryDetail");
+  detail.classList.remove("hidden");
+  document.getElementById("categoryDetailTitle").textContent = "Category " + category.num + " — " + category.name;
+  document.getElementById("categoryDetailDescription").textContent = category.description + " · Max " + category.maxPoints + " points";
+  renderFeatureList(category);
+}
+
+function backToCategoryList() {
+  state.currentCategory = null;
+  document.getElementById("categoryDetail").classList.add("hidden");
+  document.getElementById("categoryList").parentElement.classList.remove("hidden");
+  renderCategoryList();
+}
+
+function renderFeatureList(category) {
+  const container = document.getElementById("featureList");
+  container.innerHTML = "";
+  category.features.forEach(f => {
+    const data = state.features[f.id] || { status: null, measured: "", notes: "" };
+    const row = document.createElement("div");
+    row.className = "feature-row";
+
+    const title = document.createElement("div");
+    title.className = "feature-title";
+    title.textContent = f.code + " · " + f.title + " (" + f.points + " pts)";
+    row.appendChild(title);
+
+    const clause = document.createElement("div");
+    clause.className = "feature-clause";
+    clause.textContent = f.clause + " · Required: " + f.required;
+    row.appendChild(clause);
+
+    const guidance = document.createElement("div");
+    guidance.className = "feature-guidance";
+    guidance.textContent = f.guidance;
+    row.appendChild(guidance);
+
+    // Status buttons
+    const statusWrap = document.createElement("div");
+    statusWrap.className = "status-buttons";
+    ["PASS","MARGINAL","FAIL","NA"].forEach(s => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.textContent = s === "NA" ? "N/A" : s;
+      const cls = s.toLowerCase();
+      btn.className = (data.status === s ? "selected " : "") + cls;
+      btn.addEventListener("click", () => {
+        if (!state.features[f.id]) state.features[f.id] = {};
+        state.features[f.id].status = s;
+        saveState();
+        renderFeatureList(category);
+      });
+      statusWrap.appendChild(btn);
+    });
+    row.appendChild(statusWrap);
+
+    // Measured value
+    const measRow = document.createElement("div");
+    measRow.className = "row";
+    const measField = document.createElement("div");
+    measField.className = "field";
+    measField.innerHTML = `<label>Measured / Observed</label><input type="text" placeholder="e.g. 8.8% slope or 41N or Absent" value="${(data.measured||"").replace(/"/g,'&quot;')}" />`;
+    measField.querySelector("input").addEventListener("input", (e) => {
+      if (!state.features[f.id]) state.features[f.id] = {};
+      state.features[f.id].measured = e.target.value;
+      saveState();
+    });
+    measRow.appendChild(measField);
+
+    const notesField = document.createElement("div");
+    notesField.className = "field";
+    notesField.innerHTML = `<label>Notes / Remediation</label><textarea placeholder="Observations and remediation notes">${(data.notes||"").replace(/</g,"&lt;")}</textarea>`;
+    notesField.querySelector("textarea").addEventListener("input", (e) => {
+      if (!state.features[f.id]) state.features[f.id] = {};
+      state.features[f.id].notes = e.target.value;
+      saveState();
+    });
+    measRow.appendChild(notesField);
+
+    row.appendChild(measRow);
+    container.appendChild(row);
+  });
+}
+
+/* ============================================================
+   REMEDIATION TAB
+   ============================================================ */
+function renderRemediation() {
+  const container = document.getElementById("remediationList");
+  container.innerHTML = "";
+  let critical = [], high = [], medium = [], low = [];
+
+  CATEGORIES.forEach(category => {
+    if (state.setup.categoryApplicable[category.id] === false) return;
+    category.features.forEach(f => {
+      const data = state.features[f.id];
+      if (!data || data.status === "PASS" || data.status === "NA" || !data.status) return;
+      const isCritical = category.critical && data.status === "FAIL";
+      const item = {
+        category: category,
+        feature: f,
+        data: data,
+        remediation: state.remediation[f.id] || {},
+        isCritical: isCritical
+      };
+      if (isCritical) critical.push(item);
+      else if (data.status === "FAIL") high.push(item);
+      else if (data.status === "MARGINAL") medium.push(item);
+      else low.push(item);
+    });
+  });
+
+  if (critical.length === 0 && high.length === 0 && medium.length === 0 && low.length === 0) {
+    container.innerHTML = "<p style='color:var(--muted);'>No FAIL or MARGINAL findings yet. Complete the assessment to see remediation items.</p>";
+    document.getElementById("remediationSummary").innerHTML = "";
+    return;
+  }
+
+  const groups = [
+    { title: "PHASE 0 — CRITICAL LIFE SAFETY (30-60 days)", items: critical, priority: "Critical", color: "#B22222" },
+    { title: "HIGH PRIORITY (within 90 days)", items: high, priority: "High", color: "#E8A33D" },
+    { title: "MEDIUM PRIORITY (Year 2 capital budget)", items: medium, priority: "Medium", color: "#2E7D8F" },
+    { title: "LOW PRIORITY (address as convenient)", items: low, priority: "Low", color: "#555" }
+  ];
+
+  groups.forEach(group => {
+    if (group.items.length === 0) return;
+    const header = document.createElement("h3");
+    header.textContent = group.title;
+    header.style.color = group.color;
+    header.style.borderLeft = "4px solid " + group.color;
+    header.style.paddingLeft = "10px";
+    container.appendChild(header);
+
+    group.items.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "feature-row";
+      if (item.isCritical) row.style.borderLeft = "4px solid #B22222";
+
+      const title = document.createElement("div");
+      title.className = "feature-title";
+      title.textContent = "Cat " + item.category.num + " · " + item.feature.code + " — " + item.feature.title + " [" + item.data.status + "]";
+      row.appendChild(title);
+
+      if (item.data.notes) {
+        const notes = document.createElement("div");
+        notes.style.fontSize = "13px";
+        notes.style.color = "var(--muted)";
+        notes.style.margin = "4px 0 8px";
+        notes.textContent = "Notes: " + item.data.notes;
+        row.appendChild(notes);
+      }
+
+      const fieldsRow = document.createElement("div");
+      fieldsRow.className = "row";
+
+      const costField = document.createElement("div");
+      costField.className = "field";
+      costField.innerHTML = `<label>Cost Estimate (e.g. $180 – $350)</label><input type="text" value="${(item.remediation.cost||"").replace(/"/g,'&quot;')}" placeholder="Dollar range">`;
+      costField.querySelector("input").addEventListener("input", (e) => {
+        if (!state.remediation[item.feature.id]) state.remediation[item.feature.id] = {};
+        state.remediation[item.feature.id].cost = e.target.value;
+        saveState();
+        updateRemediationSummary();
+      });
+      fieldsRow.appendChild(costField);
+
+      const timelineField = document.createElement("div");
+      timelineField.className = "field";
+      timelineField.innerHTML = `<label>Timeline</label><input type="text" value="${(item.remediation.timeline||"").replace(/"/g,'&quot;')}" placeholder="e.g. 30 days, 90 days, Year 2">`;
+      timelineField.querySelector("input").addEventListener("input", (e) => {
+        if (!state.remediation[item.feature.id]) state.remediation[item.feature.id] = {};
+        state.remediation[item.feature.id].timeline = e.target.value;
+        saveState();
+      });
+      fieldsRow.appendChild(timelineField);
+
+      row.appendChild(fieldsRow);
+      container.appendChild(row);
+    });
+  });
+
+  updateRemediationSummary();
+}
+
+function updateRemediationSummary() {
+  const summary = document.getElementById("remediationSummary");
+  summary.innerHTML = "<h3>Total Estimated Remediation Range</h3><p style='font-size:14px;color:var(--muted);'>Sum based on cost estimates entered. Free-text ranges are parsed for low and high figures.</p>";
+  let lowTotal = 0, highTotal = 0;
+  Object.entries(state.remediation).forEach(([fid, r]) => {
+    if (!r.cost) return;
+    const nums = r.cost.match(/\$?[\d,]+/g);
+    if (nums && nums.length >= 1) {
+      const first = parseInt(nums[0].replace(/[\$,]/g, ""));
+      if (!isNaN(first)) lowTotal += first;
+      const last = parseInt(nums[nums.length-1].replace(/[\$,]/g, ""));
+      if (!isNaN(last)) highTotal += last;
+    }
+  });
+  if (lowTotal > 0 || highTotal > 0) {
+    const div = document.createElement("div");
+    div.className = "summary-tile";
+    div.innerHTML = `<div class="label">Total Remediation Estimate</div><div class="big-number">$${lowTotal.toLocaleString()} – $${highTotal.toLocaleString()} CAD</div><div style="font-size:13px;color:var(--muted);margin-top:6px;">Before applicable grants. Enabling Accessibility Fund up to $100,000 available.</div>`;
+    summary.appendChild(div);
+  }
+}
+
+/* ============================================================
+   SCORE TAB
+   ============================================================ */
+function renderScore() {
+  let totalEarned = 0, totalMax = 0;
+  const rows = [];
+
+  CATEGORIES.forEach(category => {
+    const applicable = state.setup.categoryApplicable[category.id] !== false;
+    if (!applicable) {
+      rows.push({ num: category.num, name: category.name, earned: null, max: category.maxPoints, pct: null, na: true, finding: "Not applicable — excluded from scoring" });
+      return;
+    }
+    const { earned, max } = categoryProgress(category);
+    totalEarned += earned;
+    totalMax += max;
+    const pct = max > 0 ? Math.round((earned / max) * 100) : 0;
+    const primaryFinding = getPrimaryFinding(category);
+    rows.push({ num: category.num, name: category.name, earned, max, pct, na: false, finding: primaryFinding });
+  });
+
+  const nai = totalMax > 0 ? Math.round((totalEarned / totalMax) * 100) : 0;
+  const certThreshold = Math.round(totalMax * CERT_THRESHOLDS.certified);
+  const goldThreshold = Math.round(totalMax * CERT_THRESHOLDS.gold);
+  const certGap = Math.max(0, certThreshold - totalEarned);
+  const goldGap = Math.max(0, goldThreshold - totalEarned);
+
+  // Score tiles
+  const tiles = document.getElementById("scoreTiles");
+  tiles.innerHTML = "";
+
+  const naiTile = document.createElement("div");
+  naiTile.className = "summary-tile";
+  naiTile.innerHTML = `<div class="label">NAI Score</div><div class="big-number">${nai}%</div><div style="font-size:13px;">${totalEarned} / ${totalMax} applicable points</div>`;
+  tiles.appendChild(naiTile);
+
+  const statusTile = document.createElement("div");
+  statusTile.className = "summary-tile";
+  let band = "Not Started";
+  let bandColor = "#555";
+  if (nai >= 80) { band = "GOLD CERTIFIED threshold met"; bandColor = "#7A5700"; }
+  else if (nai >= 60) { band = "CERTIFIED threshold met"; bandColor = "#1A5D1A"; }
+  else if (nai >= 40) { band = "Moderate compliance"; bandColor = "#2E7D8F"; }
+  else if (nai > 0) { band = "Low compliance — significant remediation"; bandColor = "#8B1A1A"; }
+  statusTile.style.borderLeftColor = bandColor;
+  statusTile.innerHTML = `<div class="label">Status Band</div><div style="font-size:18px;font-weight:bold;color:${bandColor};margin:6px 0;">${band}</div><div style="font-size:13px;">Certified threshold: ${certThreshold} pts (60%)<br>Gold threshold: ${goldThreshold} pts (80%)</div>`;
+  tiles.appendChild(statusTile);
+
+  const gapTile = document.createElement("div");
+  gapTile.className = "summary-tile";
+  gapTile.innerHTML = `<div class="label">Gap to Certified</div><div class="big-number">${certGap > 0 ? certGap + " pts" : "MET"}</div><div style="font-size:13px;">Gap to Gold: ${goldGap > 0 ? goldGap + " pts" : "MET"}</div>`;
+  tiles.appendChild(gapTile);
+
+  // Score table
+  const tbody = document.querySelector("#scoreTable tbody");
+  tbody.innerHTML = "";
+  rows.forEach(r => {
+    const tr = document.createElement("tr");
+    if (r.na) {
+      tr.style.opacity = "0.5";
+      tr.innerHTML = `<td>${r.num}</td><td><em>${r.name}</em></td><td><em>N/A</em></td><td><em>${r.max}</em></td><td><em>Excl.</em></td><td><em>${r.finding}</em></td>`;
+    } else {
+      tr.innerHTML = `<td>${r.num}</td><td><strong>${r.name}</strong></td><td><strong>${r.earned}</strong></td><td>${r.max}</td><td><strong>${r.pct}%</strong></td><td>${r.finding}</td>`;
+    }
+    tbody.appendChild(tr);
+  });
+  const totalTr = document.createElement("tr");
+  totalTr.style.background = "var(--navy)";
+  totalTr.style.color = "white";
+  totalTr.style.fontWeight = "bold";
+  totalTr.innerHTML = `<td colspan="2">TOTAL</td><td>${totalEarned}</td><td>${totalMax}</td><td>${nai}%</td><td>${band}</td>`;
+  tbody.appendChild(totalTr);
+
+  // Certification pathway
+  const path = document.getElementById("certPathway");
+  path.innerHTML = buildCertPathwayHtml(totalEarned, totalMax, nai);
+}
+
+function getPrimaryFinding(category) {
+  const fails = [];
+  const marginals = [];
+  category.features.forEach(f => {
+    const data = state.features[f.id];
+    if (!data) return;
+    if (data.status === "FAIL") fails.push(f.title + (data.measured ? " (" + data.measured + ")" : ""));
+    else if (data.status === "MARGINAL") marginals.push(f.title + (data.measured ? " (" + data.measured + ")" : ""));
+  });
+  if (fails.length > 0) return fails.slice(0, 2).join("; ") + (fails.length > 2 ? " + " + (fails.length - 2) + " more" : "");
+  if (marginals.length > 0) return "Marginal: " + marginals[0];
+  return "All applicable items compliant";
+}
+
+function buildCertPathwayHtml(earned, max, nai) {
+  if (max === 0) return "<p style='color:var(--muted);'>Complete assessment to see certification pathway.</p>";
+  const certThreshold = Math.round(max * CERT_THRESHOLDS.certified);
+  const goldThreshold = Math.round(max * CERT_THRESHOLDS.gold);
+  const certGap = Math.max(0, certThreshold - earned);
+  const goldGap = Math.max(0, goldThreshold - earned);
+  let html = `
+    <table class="score-table">
+      <thead><tr><th>Certification Status</th><th>Points Required</th><th>Current Points</th><th>Gap</th></tr></thead>
+      <tbody>
+        <tr><td><strong>RHF Accessibility Certified</strong></td><td>${certThreshold} pts (60%)</td><td>${earned} pts (${nai}%)</td><td>${certGap > 0 ? certGap + " pts" : "<strong>MET</strong>"}</td></tr>
+        <tr><td><strong>RHF Accessibility Certified Gold</strong></td><td>${goldThreshold} pts (80%)</td><td>${earned} pts (${nai}%)</td><td>${goldGap > 0 ? goldGap + " pts" : "<strong>MET</strong>"}</td></tr>
+      </tbody>
+    </table>
+  `;
+  return html;
+}
+
+/* ============================================================
+   REPORT GENERATION — Matches Clearwater Format
+   ============================================================ */
+function buildReport() {
+  const s = state.setup;
+  const hasData = s.facilityName || Object.keys(state.features).length > 0;
+  if (!hasData) {
+    document.getElementById("reportOutput").innerHTML = "<p style='text-align:center;color:var(--muted);padding:40px;'>Please complete Setup and at least one Category before generating a report.</p>";
+    return;
+  }
+
+  let totalEarned = 0, totalMax = 0;
+  const catRows = [];
+  const lifeSafety = [];
+  const allFindings = [];
+
+  CATEGORIES.forEach(category => {
+    const applicable = state.setup.categoryApplicable[category.id] !== false;
+    if (!applicable) {
+      catRows.push({ num: category.num, name: category.name, earned: null, max: category.maxPoints, pct: null, na: true, finding: "Not applicable" });
+      return;
+    }
+    const { earned, max } = categoryProgress(category);
+    totalEarned += earned;
+    totalMax += max;
+    const pct = max > 0 ? Math.round((earned / max) * 100) : 0;
+    catRows.push({ num: category.num, name: category.name, earned, max, pct, na: false, finding: getPrimaryFinding(category), category: category });
+
+    // Collect all findings for detailed section
+    category.features.forEach(f => {
+      const data = state.features[f.id];
+      if (!data || !data.status) return;
+      const remediation = state.remediation[f.id] || {};
+      allFindings.push({ category: category, feature: f, data: data, remediation: remediation });
+      if (category.critical && data.status === "FAIL") {
+        lifeSafety.push({ category: category, feature: f, data: data, remediation: remediation });
+      }
+    });
+  });
+
+  const nai = totalMax > 0 ? Math.round((totalEarned / totalMax) * 100) : 0;
+  const certThreshold = Math.round(totalMax * CERT_THRESHOLDS.certified);
+  const goldThreshold = Math.round(totalMax * CERT_THRESHOLDS.gold);
+  const certGap = Math.max(0, certThreshold - totalEarned);
+
+  let statusBand = "";
+  if (nai >= 80) statusBand = "GOLD COMPLIANCE — Exceptional accessibility standard met";
+  else if (nai >= 60) statusBand = "CERTIFIED COMPLIANCE — Accessibility Certified threshold achieved";
+  else if (nai >= 40) statusBand = "MODERATE COMPLIANCE — Remediation recommended";
+  else if (nai > 0) statusBand = "LOW COMPLIANCE — Substantial remediation required";
+
+  const dateStr = s.assessmentDate ? new Date(s.assessmentDate + "T00:00:00").toLocaleDateString("en-CA", { year: "numeric", month: "long", day: "numeric" }) : "[Date TBD]";
+
+  // Report framing adapts to reportType
+  const reportType = s.reportType || "municipal";
+  const isMunicipal = reportType === "municipal";
+  const framing = getReportFraming(reportType);
+
+  let html = "";
+
+  // Header
+  html += `
+    <div class="report-header">
+      <div style="font-size:14pt;font-weight:bold;color:var(--navy);">NOVO INDUSTRIES INC.</div>
+      <div style="font-size:11pt;color:var(--muted);">novoaccessibility.com  │  carl@novoaccessibility.com  │  587-355-4677</div>
+    </div>
+
+    <h1>NOVO ACCESSIBILITY ASSESSMENT REPORT</h1>
+    <div style="font-size:13pt;color:var(--navy);font-style:italic;margin-bottom:4px;">RHFAC Methodology  │  v4.0 Rating Survey  │  CSA/ASC B651:23</div>
+    <div style="font-size:12pt;color:var(--muted);font-style:italic;margin-bottom:20px;">${framing.subtitle}</div>
+
+    <table style="margin-bottom:20px;">
+      <tr>
+        <td style="width:50%;vertical-align:top;">
+          <strong>FACILITY</strong><br>
+          <strong style="font-size:13pt;">${esc(s.facilityName) || "[Facility Name]"}</strong><br>
+          ${esc(s.facilityMuni) || ""}<br>
+          ${esc(s.facilityAddress) || ""}<br>
+          ${esc(s.facilityType) || ""}  │  ${esc(s.facilityLevels) || ""}<br>
+          ${esc(s.facilityBuilt) || ""}
+        </td>
+        <td style="width:50%;vertical-align:top;">
+          <strong>NAI SCORE</strong><br>
+          <strong style="font-size:22pt;color:var(--navy);">${nai}%</strong><br>
+          <strong>${totalEarned} / ${totalMax} applicable points</strong><br>
+          ${statusBand}<br>
+          RHFAC Certified threshold: ${Math.round(CERT_THRESHOLDS.certified*100)}% (${certThreshold} pts)  │  Gap: ${certGap} pts<br>
+          RHFAC Gold threshold: ${Math.round(CERT_THRESHOLDS.gold*100)}% (${goldThreshold} pts)<br>
+          Assessment Date: ${dateStr}
+        </td>
+      </tr>
+    </table>
+
+    <table style="margin-bottom:20px;">
+      <tr>
+        <td style="width:25%;"><strong>Assessor</strong><br>${esc(s.assessorName) || "Carl Christie"}</td>
+        <td style="width:25%;"><strong>Credentials</strong><br>${esc(s.assessorCreds) || "RHFAC Candidate"}</td>
+        <td style="width:25%;"><strong>Survey Version</strong><br>${esc(s.surveyVersion) || "RHFAC v4.0"}</td>
+        <td style="width:25%;"><strong>Equipment</strong><br>${esc(s.equipment) || ""}</td>
+      </tr>
+    </table>
+
+    <div class="report-box">
+      <strong>IMPORTANT — SCOPE OF THIS REPORT</strong><br>
+      ${framing.scopeText}
+    </div>
+
+    <h2>1. NAI Score Summary</h2>
+    <div class="report-box">
+      <strong>NAI SCORE ${nai}%</strong>  —  ${totalEarned} / ${totalMax} pts<br><br>
+      <strong>${statusBand}</strong><br><br>
+      ${esc(s.facilityName) || "The facility"} scored ${totalEarned} of ${totalMax} applicable points across ${catRows.filter(r => !r.na).length} of ${CATEGORIES.length} RHFAC v4.0 categories. ${catRows.filter(r => r.na).length > 0 ? "Categories " + catRows.filter(r => r.na).map(r => r.num).join(", ") + " are not applicable to this building type and are excluded from scoring. " : ""}The current NAI of ${nai}% ${nai >= 60 ? "meets" : "sits " + (60 - nai) + " percentage points — " + certGap + " points — below"} the threshold for RHF Accessibility Certified status.
+      ${lifeSafety.length > 0 ? "<br><br><strong style='color:#8B1A1A;'>" + lifeSafety.length + " finding" + (lifeSafety.length > 1 ? "s" : "") + " " + (lifeSafety.length > 1 ? "are" : "is") + " life safety failures requiring immediate action regardless of certification goals.</strong>" : ""}
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>#</th><th>Category</th><th>Earned</th><th>Max</th><th>%</th><th>Primary Finding</th></tr>
+      </thead>
+      <tbody>
+  `;
+
+  catRows.forEach(r => {
+    if (r.na) {
+      html += `<tr style="opacity:0.6;"><td>${r.num}</td><td><em>${esc(r.name)}</em></td><td><em>N/A</em></td><td>${r.max}</td><td><em>Excl.</em></td><td><em>${esc(r.finding)}</em></td></tr>`;
+    } else {
+      html += `<tr><td>${r.num}</td><td><strong>${esc(r.name)}</strong></td><td><strong>${r.earned}</strong></td><td>${r.max}</td><td><strong>${r.pct}%</strong></td><td>${esc(r.finding)}</td></tr>`;
+    }
+  });
+  html += `<tr style="background:var(--navy);color:white;font-weight:bold;"><td colspan="2">TOTAL</td><td>${totalEarned}</td><td>${totalMax}</td><td>${nai}%</td><td>${statusBand}</td></tr>`;
+  html += `</tbody></table>`;
+
+  // Detailed findings
+  html += `<h2>2. Detailed Findings — RHFAC v4.0 · All Applicable Categories</h2>`;
+  CATEGORIES.forEach(category => {
+    const applicable = state.setup.categoryApplicable[category.id] !== false;
+    if (!applicable) {
+      html += `<div class="report-box" style="opacity:0.6;"><em>Category ${category.num} — ${esc(category.name)} — Not Applicable (${category.maxPoints} pts excluded from scoring).</em></div>`;
+      return;
+    }
+    const { earned, max } = categoryProgress(category);
+    const pct = max > 0 ? Math.round((earned / max) * 100) : 0;
+    const assessedFeatures = category.features.filter(f => state.features[f.id] && state.features[f.id].status);
+    if (assessedFeatures.length === 0) return; // skip unassessed categories
+
+    html += `<h3>Category ${category.num} — ${esc(category.name)}  │  Score: ${earned} / ${max} points  (${pct}%)</h3>`;
+    html += `<table><thead><tr><th>Item</th><th>Clause</th><th>Measured</th><th>Required</th><th>Status</th><th>Notes / Remediation</th></tr></thead><tbody>`;
+    assessedFeatures.forEach(f => {
+      const data = state.features[f.id];
+      const statusColor = data.status === "PASS" ? "#1A5D1A" : data.status === "MARGINAL" ? "#7A5700" : data.status === "FAIL" ? "#8B1A1A" : "#555";
+      const statusBg = data.status === "PASS" ? "var(--lgrn)" : data.status === "MARGINAL" ? "#FFF2CC" : data.status === "FAIL" ? "var(--lred)" : "#E0E0E0";
+      html += `<tr>
+        <td><strong>${f.code}</strong> ${esc(f.title)}</td>
+        <td>${esc(f.clause)}</td>
+        <td><strong>${esc(data.measured || "—")}</strong></td>
+        <td>${esc(f.required)}</td>
+        <td style="background:${statusBg};color:${statusColor};font-weight:bold;">${data.status}</td>
+        <td>${esc(data.notes || "")}</td>
+      </tr>`;
+    });
+    html += `</tbody></table>`;
+  });
+
+  // Prioritized remediation plan
+  html += `<h2>3. Prioritized Remediation Plan</h2>`;
+  const fails = allFindings.filter(f => f.data.status === "FAIL" && !f.category.critical);
+  const marginals = allFindings.filter(f => f.data.status === "MARGINAL");
+
+  // Calculate total remediation
+  let lowTotal = 0, highTotal = 0;
+  allFindings.forEach(item => {
+    if (item.remediation.cost) {
+      const nums = item.remediation.cost.match(/\$?[\d,]+/g);
+      if (nums && nums.length >= 1) {
+        const first = parseInt(nums[0].replace(/[\$,]/g, ""));
+        if (!isNaN(first)) lowTotal += first;
+        const last = parseInt(nums[nums.length-1].replace(/[\$,]/g, ""));
+        if (!isNaN(last)) highTotal += last;
+      }
+    }
+  });
+
+  if (lowTotal > 0 || highTotal > 0) {
+    html += `<p><strong>Total Estimated Remediation: $${lowTotal.toLocaleString()} – $${highTotal.toLocaleString()} CAD</strong> (before applicable grants)</p>`;
+  }
+
+  html += `<table><thead><tr><th>Remediation Item</th><th>Priority</th><th>Est. Cost</th><th>Timeline</th><th>Category</th></tr></thead><tbody>`;
+
+  if (lifeSafety.length > 0) {
+    html += `<tr style="background:#FFEBEE;"><td colspan="5"><strong>PHASE 0 — CRITICAL LIFE SAFETY — Complete within 30–60 days regardless of certification goals</strong></td></tr>`;
+    lifeSafety.forEach(item => {
+      html += `<tr><td>${esc(item.feature.title)}${item.data.notes ? " — " + esc(item.data.notes) : ""}</td><td><strong style="color:#8B1A1A;">Critical</strong></td><td>${esc(item.remediation.cost || "—")}</td><td>${esc(item.remediation.timeline || "30 days")}</td><td>Cat. ${item.category.num}</td></tr>`;
+    });
+  }
+  if (fails.length > 0) {
+    html += `<tr style="background:#FFF8E1;"><td colspan="5"><strong>HIGH PRIORITY — Within 90 days</strong></td></tr>`;
+    fails.forEach(item => {
+      html += `<tr><td>${esc(item.feature.title)}${item.data.notes ? " — " + esc(item.data.notes) : ""}</td><td><strong>High</strong></td><td>${esc(item.remediation.cost || "—")}</td><td>${esc(item.remediation.timeline || "90 days")}</td><td>Cat. ${item.category.num}</td></tr>`;
+    });
+  }
+  if (marginals.length > 0) {
+    html += `<tr style="background:#E3F2FD;"><td colspan="5"><strong>MEDIUM / LOW PRIORITY — Year 2 capital budget or as convenient</strong></td></tr>`;
+    marginals.forEach(item => {
+      html += `<tr><td>${esc(item.feature.title)}${item.data.notes ? " — " + esc(item.data.notes) : ""}</td><td>Medium</td><td>${esc(item.remediation.cost || "—")}</td><td>${esc(item.remediation.timeline || "Year 2")}</td><td>Cat. ${item.category.num}</td></tr>`;
+    });
+  }
+  html += `</tbody></table>`;
+
+  // Next Dollar Impact — MUNICIPAL ONLY
+  if (isMunicipal) {
+    html += buildNextDollarImpactSection(catRows, allFindings, lifeSafety, totalEarned, totalMax, certThreshold, goldThreshold);
+  }
+
+  // Executive summary
+  const execSummaryNum = isMunicipal ? "5" : "4";
+  html += `
+    <h2>${execSummaryNum}. ${framing.execSummaryTitle}</h2>
+    <div class="report-box">
+      ${esc(s.facilityName) || "The facility"} scored ${totalEarned} of ${totalMax} applicable points (NAI ${nai}%) across a full RHFAC v4.0 assessment conducted ${dateStr}. This score represents ${statusBand.toLowerCase()}${nai < 60 ? " and falls " + certGap + " points below the threshold for RHF Accessibility Certified status" : ""}.
+      ${lifeSafety.length > 0 ? "<br><br><strong>" + lifeSafety.length + " finding" + (lifeSafety.length > 1 ? "s constitute" : " constitutes") + " life safety failures requiring immediate action.</strong> " + lifeSafety.map(ls => esc(ls.feature.title) + " " + (ls.data.notes ? "(" + esc(ls.data.notes) + ")" : "") ).join(". ") + "." : ""}
+      <br><br>
+      ${framing.execSummaryClose}
+    </div>
+
+    <hr style="margin:30px 0;border:none;border-top:1px solid var(--border);">
+    <div style="text-align:center;font-size:10pt;color:var(--muted);">
+      Novo Industries Inc.  │  novoaccessibility.com  │  carl@novoaccessibility.com  │  587-355-4677<br>
+      RHFAC v4.0 Rating Survey (September 2024)  │  CSA/ASC B651:23  │  ${dateStr}  │  ${esc(s.assessorName)}, ${esc(s.assessorCreds)}<br>
+      <em>This is a Novo Accessibility Assessment using RHFAC methodology. It does not confer RHF certification. Confidential — ${esc(s.facilityMuni) || "Client"}.</em>
+    </div>
+  `;
+
+  document.getElementById("reportOutput").innerHTML = html;
+}
+
+/* ============================================================
+   REPORT FRAMING — adapts copy based on report type
+   ============================================================ */
+function getReportFraming(reportType) {
+  const framings = {
+    municipal: {
+      subtitle: "Pre-Complaint Documentation Baseline — Municipal Facilities Assessment",
+      scopeText: "This report is a Novo Accessibility Assessment produced using RHFAC v4.0 methodology and CSA/ASC B651:23 standards. It constitutes a pre-complaint documentation baseline for municipal capital planning purposes. It is not an RHFAC Registry submission and does not confer RHF certification. Formal RHFAC certification requires submission to the RHFAC Registry by a designated RHFAC Professional for adjudication by the Rick Hansen Foundation. All measurements were taken with calibrated equipment. Cost estimates are for capital planning purposes only.",
+      execSummaryTitle: "Executive Summary for Administration and Council",
+      execSummaryClose: "This assessment constitutes the pre-complaint documentation baseline and can serve as needs documentation for grant applications such as the federal Enabling Accessibility Fund (up to $100,000) and provincial accessibility programs."
+    },
+    private: {
+      subtitle: "Accessibility Assessment Report — Private Sector Facility",
+      scopeText: "This report is a Novo Accessibility Assessment produced using RHFAC v4.0 methodology and CSA/ASC B651:23 standards. It documents the current accessibility status of the facility and identifies areas for improvement. It is not an RHFAC Registry submission and does not confer RHF certification. All measurements were taken with calibrated equipment. Cost estimates are for planning purposes only.",
+      execSummaryTitle: "Executive Summary",
+      execSummaryClose: "This assessment identifies the current accessibility status of the facility and prioritizes improvements to support a more inclusive customer, tenant, and employee experience."
+    },
+    healthcare: {
+      subtitle: "Accessibility Assessment — Healthcare and Long-Term Care Facility",
+      scopeText: "This report is a Novo Accessibility Assessment produced using RHFAC v4.0 methodology and CSA/ASC B651:23 standards. It documents accessibility across the facility in the context of resident, patient, family, and staff needs. It is not an RHFAC Registry submission and does not confer RHF certification. All measurements were taken with calibrated equipment. Cost estimates are for planning purposes only.",
+      execSummaryTitle: "Executive Summary for Administration",
+      execSummaryClose: "This assessment documents accessibility across the facility and can support CARF accreditation preparation, provincial Continuing Care Health Service Standards compliance, and capital renewal planning."
+    },
+    educational: {
+      subtitle: "Accessibility Assessment — Educational and Campus Facility",
+      scopeText: "This report is a Novo Accessibility Assessment produced using RHFAC v4.0 methodology and CSA/ASC B651:23 standards. It documents the accessibility status of the facility in support of the institution's obligations under provincial and federal human rights legislation. It is not an RHFAC Registry submission and does not confer RHF certification. All measurements were taken with calibrated equipment. Cost estimates are for capital planning purposes only.",
+      execSummaryTitle: "Executive Summary for Administration",
+      execSummaryClose: "This assessment supports the institution's capital planning for accessibility improvements and can serve as needs documentation for the federal Enabling Accessibility Fund and other grant programs."
+    },
+    general: {
+      subtitle: "Accessibility Assessment Report",
+      scopeText: "This report is a Novo Accessibility Assessment produced using RHFAC v4.0 methodology and CSA/ASC B651:23 standards. It is not an RHFAC Registry submission and does not confer RHF certification. All measurements were taken with calibrated equipment. Cost estimates are for planning purposes only.",
+      execSummaryTitle: "Executive Summary",
+      execSummaryClose: "This assessment documents the current accessibility status of the facility and identifies priorities for improvement."
+    }
+  };
+  return framings[reportType] || framings.municipal;
+}
+
+/* ============================================================
+   NEXT DOLLAR IMPACT — Municipal reports only
+   Ranks remediation items by compliance points recovered per dollar,
+   identifies the cheapest path to Certified threshold, and builds
+   a two-year capital plan to Gold.
+   ============================================================ */
+function buildNextDollarImpactSection(catRows, allFindings, lifeSafety, totalEarned, totalMax, certThreshold, goldThreshold) {
+  const certGap = Math.max(0, certThreshold - totalEarned);
+  const goldGap = Math.max(0, goldThreshold - totalEarned);
+
+  // Calculate points recoverable per finding (FAIL = full points, MARGINAL = half points)
+  const recoverable = allFindings
+    .filter(item => !item.category.critical) // life safety handled separately
+    .filter(item => item.data.status === "FAIL" || item.data.status === "MARGINAL")
+    .map(item => {
+      const potentialPoints = item.feature.points;
+      const currentMultiplier = STATUS_POINT_MULTIPLIERS[item.data.status] || 0;
+      const pointsToRecover = Math.round(potentialPoints * (1 - currentMultiplier));
+
+      // Parse cost range
+      let lowCost = 0, highCost = 0, midCost = 0, hasCost = false;
+      if (item.remediation.cost) {
+        const nums = item.remediation.cost.match(/\$?[\d,]+/g);
+        if (nums && nums.length >= 1) {
+          lowCost = parseInt(nums[0].replace(/[\$,]/g, "")) || 0;
+          highCost = parseInt(nums[nums.length-1].replace(/[\$,]/g, "")) || lowCost;
+          midCost = (lowCost + highCost) / 2;
+          hasCost = true;
+        }
+      }
+
+      // Points per dollar (use midpoint cost; $0 cost = infinite ratio, sorted to top)
+      const ratio = midCost > 0 ? pointsToRecover / midCost : (pointsToRecover > 0 ? Infinity : 0);
+
+      return {
+        item: item,
+        points: pointsToRecover,
+        lowCost: lowCost,
+        highCost: highCost,
+        midCost: midCost,
+        hasCost: hasCost,
+        ratio: ratio
+      };
+    })
+    .filter(r => r.points > 0)
+    .sort((a, b) => b.ratio - a.ratio); // best ratio first
+
+  // Build Path to Certified — minimum spend
+  let html = `<h2>4. Next Dollar Impact — Certification Pathway</h2>`;
+  html += `
+    <div class="report-box">
+      <strong>What This Section Answers:</strong> If the client can only spend a limited amount right now, this section identifies which actions deliver the most compliance improvement per dollar spent. Life safety items are flagged separately — they are mandatory regardless of cost or score impact. All other items are ranked by points recovered per dollar invested.
+    </div>
+
+    <table style="margin-bottom:15px;">
+      <thead>
+        <tr><th>Certification Status</th><th>Points Required</th><th>Current Points</th><th>Gap</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>RHF Accessibility Certified</strong></td><td>${certThreshold} pts (60%)</td><td>${totalEarned} pts</td><td>${certGap > 0 ? certGap + " pts" : "<strong>MET</strong>"}</td></tr>
+        <tr><td><strong>RHF Accessibility Certified Gold</strong></td><td>${goldThreshold} pts (80%)</td><td>${totalEarned} pts</td><td>${goldGap > 0 ? goldGap + " pts" : "<strong>MET</strong>"}</td></tr>
+      </tbody>
+    </table>
+  `;
+
+  // 4.1 — Path to Certified: minimum spend
+  if (certGap > 0) {
+    html += `<h3>4.1 — Path to Certification (${certThreshold} points / 60%) — Minimum Spend</h3>`;
+    html += `<table><thead><tr><th>Rank</th><th>Action</th><th>Est. Cost</th><th>Points Recovered</th><th>Running Total</th></tr></thead><tbody>`;
+
+    let runningPoints = totalEarned;
+    let runningLowCost = 0, runningHighCost = 0;
+    let certReachedRow = -1;
+    let rank = 1;
+
+    for (const r of recoverable) {
+      if (runningPoints >= certThreshold) break;
+      runningPoints += r.points;
+      runningLowCost += r.lowCost;
+      runningHighCost += r.highCost;
+      const costDisplay = r.hasCost
+        ? (r.lowCost === r.highCost ? "$" + r.lowCost.toLocaleString() : "$" + r.lowCost.toLocaleString() + " – $" + r.highCost.toLocaleString())
+        : (r.ratio === Infinity ? "<strong>$0 — staff action</strong>" : "<em>Cost TBD</em>");
+
+      const crossedCert = runningPoints >= certThreshold && certReachedRow === -1;
+      if (crossedCert) certReachedRow = rank;
+
+      html += `<tr${crossedCert ? ' style="background:var(--lgrn);"' : ''}>
+        <td><strong>${rank}</strong></td>
+        <td><strong>${esc(r.item.feature.title)}</strong>${r.item.data.notes ? ". " + esc(r.item.data.notes) : ""} <em>(Cat. ${r.item.category.num})</em></td>
+        <td>${costDisplay}</td>
+        <td><strong>+${r.points} pts</strong></td>
+        <td>${runningPoints} / ${totalMax}${crossedCert ? ' <strong>CERTIFIED THRESHOLD CROSSED</strong>' : ''}</td>
+      </tr>`;
+      rank++;
+    }
+
+    if (certReachedRow > 0) {
+      html += `<tr style="background:var(--ltel);"><td colspan="5"><strong>Total spend to reach Certified threshold: $${runningLowCost.toLocaleString()} – $${runningHighCost.toLocaleString()}</strong>. Phase 0 life safety items must be completed in parallel. They are mandatory prerequisites for formal certification submission regardless of score achieved.</td></tr>`;
+    } else {
+      html += `<tr style="background:#FFF8E1;"><td colspan="5"><em>Available remediation items are not sufficient to reach the Certified threshold. Additional scoring categories or new accessibility investments will be required.</em></td></tr>`;
+    }
+    html += `</tbody></table>`;
+  } else {
+    html += `<h3>4.1 — Certified Threshold Already Met</h3>`;
+    html += `<div class="report-box"><strong>Current NAI score exceeds the RHF Accessibility Certified threshold of ${certThreshold} points (60%).</strong> Remediation items below are prioritized for the pathway to Gold certification (${goldThreshold} points / 80%). Life safety items in Phase 0 remain mandatory prerequisites for formal certification submission regardless of score.</div>`;
+  }
+
+  // 4.2 — Two-Year Capital Plan to Gold
+  html += `<h3>4.2 — Two-Year Capital Plan to Gold Certification (80%)</h3>`;
+
+  // Phase 0 — Life safety
+  let phase0Low = 0, phase0High = 0, phase0Points = 0;
+  lifeSafety.forEach(item => {
+    phase0Points += item.feature.points; // life safety items assumed to recover full points
+    if (item.remediation.cost) {
+      const nums = item.remediation.cost.match(/\$?[\d,]+/g);
+      if (nums && nums.length >= 1) {
+        phase0Low += parseInt(nums[0].replace(/[\$,]/g, "")) || 0;
+        phase0High += parseInt(nums[nums.length-1].replace(/[\$,]/g, "")) || 0;
+      }
+    }
+  });
+
+  // Phase 1 — top half of recoverable (highest ratio)
+  const phase1Items = recoverable.slice(0, Math.ceil(recoverable.length / 2));
+  const phase2Items = recoverable.slice(Math.ceil(recoverable.length / 2));
+
+  let phase1Low = 0, phase1High = 0, phase1Points = 0;
+  phase1Items.forEach(r => { phase1Low += r.lowCost; phase1High += r.highCost; phase1Points += r.points; });
+
+  let phase2Low = 0, phase2High = 0, phase2Points = 0;
+  phase2Items.forEach(r => { phase2Low += r.lowCost; phase2High += r.highCost; phase2Points += r.points; });
+
+  const afterPhase0 = totalEarned + phase0Points;
+  const afterPhase1 = afterPhase0 + phase1Points;
+  const afterPhase2 = afterPhase1 + phase2Points;
+  const pctAfterPhase0 = totalMax > 0 ? Math.round((afterPhase0 / totalMax) * 100) : 0;
+  const pctAfterPhase1 = totalMax > 0 ? Math.round((afterPhase1 / totalMax) * 100) : 0;
+  const pctAfterPhase2 = totalMax > 0 ? Math.round((afterPhase2 / totalMax) * 100) : 0;
+
+  html += `<table><thead><tr><th>Phase</th><th>Actions</th><th>Est. Cost</th><th>Points Gained</th><th>Running Score</th></tr></thead><tbody>`;
+
+  if (lifeSafety.length > 0) {
+    html += `<tr><td><strong>Phase 0</strong><br>Immediate</td>
+      <td><strong>Life safety items</strong><br>${lifeSafety.map(ls => esc(ls.feature.title)).join("; ")}<br><em>Mandatory regardless of score. Must be completed before certification submission is possible.</em></td>
+      <td>$${phase0Low.toLocaleString()} – $${phase0High.toLocaleString()}</td>
+      <td><strong>+${phase0Points} pts</strong></td>
+      <td><strong>${afterPhase0} / ${totalMax} = ${pctAfterPhase0}%</strong></td>
+    </tr>`;
+  }
+
+  if (phase1Items.length > 0) {
+    html += `<tr><td><strong>Phase 1</strong><br>Year 1</td>
+      <td><strong>High-leverage remediation (best points per dollar)</strong><br>${phase1Items.map(r => esc(r.item.feature.title)).join("; ")}</td>
+      <td>$${phase1Low.toLocaleString()} – $${phase1High.toLocaleString()}</td>
+      <td><strong>+${phase1Points} pts</strong></td>
+      <td><strong>${afterPhase1} / ${totalMax} = ${pctAfterPhase1}%</strong>${afterPhase1 >= certThreshold ? ' <em>RHF Accessibility Certified</em>' : ''}</td>
+    </tr>`;
+  }
+
+  if (phase2Items.length > 0) {
+    html += `<tr><td><strong>Phase 2</strong><br>Year 2</td>
+      <td><strong>Remaining compliance and Gold-specific items</strong><br>${phase2Items.map(r => esc(r.item.feature.title)).join("; ")}</td>
+      <td>$${phase2Low.toLocaleString()} – $${phase2High.toLocaleString()}</td>
+      <td><strong>+${phase2Points} pts</strong></td>
+      <td><strong>${afterPhase2} / ${totalMax} = ${pctAfterPhase2}%</strong>${afterPhase2 >= goldThreshold ? ' <em>RHF Accessibility Certified Gold</em>' : ''}</td>
+    </tr>`;
+  }
+
+  const totalLow = phase0Low + phase1Low + phase2Low;
+  const totalHigh = phase0High + phase1High + phase2High;
+  html += `<tr style="background:var(--navy);color:white;font-weight:bold;"><td colspan="2">TOTAL TWO-YEAR INVESTMENT FOR GOLD</td><td colspan="3">$${totalLow.toLocaleString()} – $${totalHigh.toLocaleString()} CAD before grants  │  Enabling Accessibility Fund: up to $100,000 available</td></tr>`;
+  html += `</tbody></table>`;
+
+  return html;
+}
+
+function esc(str) {
+  if (!str) return "";
+  return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+/* ============================================================
+   EXPORT FUNCTIONS
+   ============================================================ */
+function copyReportToClipboard() {
+  const reportHtml = document.getElementById("reportOutput").innerHTML;
+  const plainText = document.getElementById("reportOutput").innerText;
+  if (navigator.clipboard && navigator.clipboard.write) {
+    const blob = new Blob([reportHtml], { type: "text/html" });
+    const plainBlob = new Blob([plainText], { type: "text/plain" });
+    navigator.clipboard.write([new ClipboardItem({ "text/html": blob, "text/plain": plainBlob })])
+      .then(() => alert("Report copied to clipboard. You can paste it into Word or email."))
+      .catch(() => {
+        navigator.clipboard.writeText(plainText).then(() => alert("Plain text report copied to clipboard."));
+      });
+  } else {
+    navigator.clipboard.writeText(plainText).then(() => alert("Report copied to clipboard."));
+  }
+}
+
+function exportReportAsWord() {
+  const reportHtml = document.getElementById("reportOutput").innerHTML;
+  const s = state.setup;
+  const filename = ((s.facilityName || "Assessment") + "_" + (s.assessmentDate || "")).replace(/[^A-Za-z0-9_-]/g, "_") + ".doc";
+  const docContent = `
+<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">
+<head>
+<meta charset="UTF-8">
+<title>Novo Accessibility Assessment</title>
+<style>
+body { font-family: Arial, sans-serif; font-size: 12pt; }
+h1, h2, h3 { color: #1F3864; }
+table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+table th, table td { padding: 6px 8px; border: 1px solid #CCCCCC; }
+table th { background: #1F3864; color: white; }
+</style>
+</head>
+<body>${reportHtml}</body>
+</html>
+  `;
+  const blob = new Blob([docContent], { type: "application/msword" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportData() {
+  const s = state.setup;
+  const filename = "Novo_Backup_" + (s.facilityName || "Assessment").replace(/[^A-Za-z0-9_-]/g, "_") + "_" + new Date().toISOString().substr(0, 10) + ".json";
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+  alert("Backup downloaded as " + filename);
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!imported.version) throw new Error("Not a valid backup file");
+      if (!confirm("This will replace your current assessment data. Continue?")) return;
+      state = imported;
+      saveState();
+      renderSetup();
+      alert("Backup restored successfully.");
+    } catch (err) {
+      alert("Could not import file: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = ""; // allow reimport same file
+}
+
+function clearAllData() {
+  if (!confirm("This will erase all assessment data. Make sure you have downloaded a backup. Continue?")) return;
+  if (!confirm("Are you absolutely sure? This cannot be undone.")) return;
+  localStorage.removeItem("novoRhfacState");
+  state = defaultState();
+  renderSetup();
+  renderCategoryList();
+  alert("All data cleared. Starting fresh.");
+}
+
+/* ============================================================
+   INITIAL RENDER
+   ============================================================ */
+renderSetup();
+renderCategoryList();
+
+</script>
+
+</body>
+</html>
