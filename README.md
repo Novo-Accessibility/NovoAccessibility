@@ -37,7 +37,7 @@ carl@seniorhomesafety.com (home safety and OT partnerships)
 
 ## License
 
-All rights reserved. See LICENSE file.
+Released under the MIT License. See LICENSE file for details.
 
 ## Status
 
