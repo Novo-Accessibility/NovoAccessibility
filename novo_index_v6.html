@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Novo Accessibility | Municipal Facility Assessments &amp; Capital Planning</title>
+<meta name="description" content="Your municipality has accessibility commitments and a limited capital budget. Novo Accessibility produces the data you need to know which building to fund first and why.">
+<meta property="og:title" content="Novo Accessibility | Municipal Facility Assessments &amp; Capital Planning">
+<meta property="og:description" content="Standards-aligned accessibility assessments for Canadian municipalities. RHFAC-informed evaluations with council-ready capital roadmaps.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://novoaccessibility.com">
+<link rel="canonical" href="https://novoaccessibility.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:17px}
+body{font-family:'Manrope',system-ui,sans-serif;line-height:1.7;color:#111;background:#fff;-webkit-font-smoothing:antialiased}
+a{color:#0a7a7f;text-decoration:none}a:hover{color:#086568}
+.w{max-width:1080px;margin:0 auto;padding:0 28px}
+
+/* ══════════ NAV ══════════ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(15,37,64,.97);backdrop-filter:blur(8px);transition:box-shadow .3s}
+.nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.nav-in{max-width:1080px;margin:0 auto;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav-logo{display:flex;align-items:center;gap:12px;color:#fff;font-weight:700;font-size:19px;letter-spacing:.3px}
+.nav-logo svg{height:28px;width:auto}
+.nav-logo span{font-weight:400;opacity:.7;font-size:14px}
+.nl{display:flex;align-items:center;gap:28px}
+.nl a{color:#fff;font-size:13.5px;font-weight:500;opacity:.75;transition:opacity .2s}
+.nl a:hover{opacity:1;color:#fff}
+.nb{background:#c0392b;color:#fff!important;padding:9px 20px;border-radius:5px;font-weight:600!important;opacity:1!important;transition:background .2s}
+.nb:hover{background:#a93226}
+.mt{display:none;background:none;border:none;cursor:pointer;padding:6px}
+.mt i{display:block;width:22px;height:2px;background:#fff;margin:5px 0}
+
+/* ══════════ HERO ══════════ */
+.hero{position:relative;min-height:600px;display:flex;align-items:flex-end;padding:0 0 72px;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:url('calgary_city_hall.png') center/cover no-repeat}
+.hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(10,20,38,.92) 0%,rgba(10,20,38,.75) 40%,rgba(10,20,38,.5) 100%)}
+.hero-content{position:relative;z-index:2;max-width:640px;padding-top:160px}
+.hero-label{font-size:11.5px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#fff;opacity:.7;margin-bottom:20px;display:block}
+.hero h1{font-family:'Newsreader',Georgia,serif;font-size:clamp(30px,4.2vw,44px);line-height:1.2;color:#fff;margin-bottom:24px;font-weight:400}
+.hero h1 em{font-style:italic;opacity:.9}
+.hero-p{font-size:17px;line-height:1.75;color:#fff;opacity:.75;margin-bottom:32px;max-width:540px}
+.hero-acts{display:flex;gap:14px;flex-wrap:wrap}
+.br{display:inline-flex;align-items:center;gap:9px;background:#c0392b;color:#fff;padding:14px 28px;border-radius:5px;font-size:15px;font-weight:600;transition:background .2s;border:none;cursor:pointer}
+.br:hover{background:#a93226;color:#fff}
+.bo{display:inline-flex;align-items:center;gap:9px;color:#fff;padding:14px 28px;border-radius:5px;font-size:15px;font-weight:500;border:1.5px solid rgba(255,255,255,.35);background:rgba(255,255,255,.06);transition:all .2s;cursor:pointer}
+.bo:hover{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.5);color:#fff}
+
+/* ══════════ DATA STRIP ══════════ */
+.strip{background:#0f2540;border-bottom:3px solid #c0392b}
+.strip-in{display:flex;justify-content:center;gap:0}
+.strip-item{padding:20px 40px;text-align:center;border-right:1px solid rgba(255,255,255,.08)}
+.strip-item:last-child{border-right:none}
+.strip-num{font-family:'Newsreader',Georgia,serif;font-size:24px;color:#fff;font-weight:500;line-height:1.2}
+.strip-label{font-size:11.5px;color:#fff;opacity:.7;text-transform:uppercase;letter-spacing:1.2px;margin-top:4px}
+
+/* ══════════ PROCESS ══════════ */
+.process{padding:80px 0;background:#f8f7f4}
+.sh{margin-bottom:48px}
+.sh h2{font-family:'Newsreader',Georgia,serif;font-size:clamp(26px,3.2vw,36px);color:#111;font-weight:400;line-height:1.25;margin-bottom:10px}
+.sh p{font-size:16px;color:#444;max-width:500px;line-height:1.65}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.step{position:relative;padding:32px 28px 28px;background:#fff;border:1px solid #d4d4d4;border-top:3px solid #1a3a5c;border-radius:0 0 6px 6px}
+.step-n{font-family:'Newsreader',Georgia,serif;font-size:13px;color:#1a3a5c;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;opacity:.7}
+.step h3{font-family:'Newsreader',Georgia,serif;font-size:22px;color:#111;font-weight:500;margin-bottom:10px}
+.step p{font-size:14.5px;color:#444;line-height:1.7}
+
+/* ══════════ DELIVERABLES ══════════ */
+.deliv{padding:80px 0;background:#f8f7f4}
+.del-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.del-card{padding:28px 24px;background:#fff;border:1px solid #d4d4d4;border-radius:6px;transition:border-color .2s}
+.del-card:hover{border-color:#1a3a5c}
+.del-ico{width:48px;height:48px;background:#0f2540;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.del-ico svg{width:24px;height:24px;color:#fff}
+.del-card h3{font-size:15.5px;font-weight:700;color:#111;margin-bottom:6px;line-height:1.35}
+.del-card p{font-size:14px;color:#444;line-height:1.65}
+.del-span{grid-column:1/-1;text-align:center;padding:20px;background:#0f2540;border-radius:6px}
+.del-span p{color:#fff;font-size:14.5px;font-weight:500;opacity:.85}
+
+/* ══════════ AUDIENCE ══════════ */
+.audience{padding:80px 0}
+.aud-tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.at{padding:11px 22px;background:#fff;border:1px solid #d4d4d4;border-radius:5px;font-size:14px;font-weight:500;color:#111}
+.at-hi{background:#0f2540;color:#fff;border-color:#0f2540}
+
+/* ══════════ FAQ ══════════ */
+.faq{padding:80px 0;background:#f8f7f4}
+.faq-list{max-width:720px}
+.fi{border-bottom:1px solid #d4d4d4}
+.fq{width:100%;background:none;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:20px 0;font-size:16px;font-weight:600;color:#111;text-align:left;font-family:'Manrope',sans-serif;gap:16px;line-height:1.4}
+.fq:hover{color:#1a3a5c}
+.fq svg{flex-shrink:0;width:18px;height:18px;color:#666;transition:transform .3s}
+.fi.open .fq svg{transform:rotate(45deg)}
+.fa{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s}
+.fi.open .fa{max-height:400px;padding-bottom:20px}
+.fa p{color:#444;font-size:15px;line-height:1.7}
+
+/* ══════════ CTA ══════════ */
+.cta-sec{position:relative;padding:80px 0;overflow:hidden}
+.cta-bg{position:absolute;inset:0;background:url('calgary_city_hall.png') center 30%/cover no-repeat}
+.cta-bg::after{content:'';position:absolute;inset:0;background:rgba(10,20,38,.88)}
+.cta-content{position:relative;z-index:2;max-width:540px}
+.cta-content h2{font-family:'Newsreader',Georgia,serif;font-size:clamp(26px,3vw,34px);color:#fff;font-weight:400;margin-bottom:14px;line-height:1.25}
+.cta-content>p{color:#fff;opacity:.75;font-size:16px;line-height:1.7;margin-bottom:32px}
+.cta-btns{display:flex;gap:14px;flex-wrap:wrap}
+.cta-fine{margin-top:20px;font-size:13px;color:#fff;opacity:.7}
+
+/* ══════════ FOOTER ══════════ */
+.ft{background:#0f2540;color:#fff;padding:48px 0 28px}
+.ft-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;padding-bottom:32px;border-bottom:1px solid rgba(255,255,255,.08)}
+.ft-col strong{display:block;font-size:16px;color:#fff;margin-bottom:6px}
+.ft-col p,.ft-col a{font-size:14px;color:#fff;opacity:.7;line-height:1.9}
+.ft-col a:hover{opacity:1;color:#fff}
+.ft-bot{display:flex;justify-content:space-between;align-items:center;padding-top:18px;flex-wrap:wrap;gap:12px}
+.ft-bot p{font-size:12px;color:#fff;opacity:.7}
+.ft-dis{margin-top:16px;font-size:12px;color:#fff;opacity:.7;line-height:1.6;max-width:680px}
+
+/* ══════════ RESPONSIVE ══════════ */
+@media(max-width:768px){
+  .nl{display:none;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:rgba(15,37,64,.98);padding:20px 28px;gap:14px;border-top:1px solid rgba(255,255,255,.08)}
+  .nl.open{display:flex}
+  .mt{display:block}
+  .hero{min-height:520px}
+  .hero-content{padding-top:130px}
+  .strip-in{flex-wrap:wrap}
+  .strip-item{flex:1 1 50%;border-bottom:1px solid rgba(255,255,255,.08);padding:16px 20px}
+  .strip-item:nth-child(odd){border-right:1px solid rgba(255,255,255,.08)}
+  .strip-item:nth-child(even){border-right:none}
+  .steps{grid-template-columns:1fr}
+  .del-grid{grid-template-columns:1fr}
+  .ft-grid{grid-template-columns:1fr}
+  .hero-acts,.cta-btns{flex-direction:column}
+  .br,.bo{width:100%;justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" id="nav">
+<div class="nav-in">
+<a href="/" class="nav-logo">
+<svg viewBox="0 0 520 468" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M376.5 466.5L298.5 466.5C298.5 337.7 203.5 230.6 79.9 211.8L79.9 466.5L2 466.5L2 131L41 131C226 131 376.5 281.5 376.5 466.5ZM443.4.2L443.4 210.7C426.5 185.6 407.4 162.4 386 141.1C298.7 53.8 182.7 5.8 59.3 5.8L0 5.8L0 83.7L59.3 83.7C271.1 83.7 443.4 256 443.4 467.7L521.3 467.7L521.3.2Z"/></svg>
+NOVO <span>Accessibility</span>
+</a>
+<div class="nl" id="navLinks">
+<a href="#process">Process</a>
+<a href="#deliverables">Deliverables</a>
+<a href="#faq">FAQ</a>
+<a href="https://calendly.com/carl-novoaccessibility/15-minute-introductory-call" target="_blank" rel="noopener" class="nb">Book a Call</a>
+</div>
+<button class="mt" id="mobileToggle" aria-label="Menu"><i></i><i></i><i></i></button>
+</div>
+</nav>
+
+<!-- HERO with Calgary Municipal Building photo -->
+<header class="hero">
+<div class="hero-bg" role="img" aria-label="Calgary Municipal Building"></div>
+<div class="w">
+<div class="hero-content">
+  <span class="hero-label">Municipal Accessibility</span>
+  <h1>You have accessibility commitments and a limited capital budget.<br><em>Which building do you fund first?</em></h1>
+  <p class="hero-p">Novo Accessibility assesses your facilities against a consistent scoring framework and produces the prioritized, council-ready data that tells capital planners where each dollar delivers the most compliance value.</p>
+  <div class="hero-acts">
+    <a href="https://calendly.com/carl-novoaccessibility/15-minute-introductory-call" target="_blank" rel="noopener" class="br">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Request 15-Minute Call</a>
+    <a href="https://github.com/Novo-Accessibility/NovoAccessibility/blob/main/pilot-overview.pdf" target="_blank" class="bo">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download Pilot Summary</a>
+  </div>
+</div>
+</div>
+</header>
+
+<!-- DATA STRIP -->
+<div class="strip">
+<div class="strip-in">
+  <div class="strip-item"><div class="strip-num">3 to 5</div><div class="strip-label">Facilities Assessed</div></div>
+  <div class="strip-item"><div class="strip-num">4 to 5 Weeks</div><div class="strip-label">Pilot Timeline</div></div>
+  <div class="strip-item"><div class="strip-num">5</div><div class="strip-label">Council-Ready Deliverables</div></div>
+  <div class="strip-item"><div class="strip-num">Fixed Fee</div><div class="strip-label">No Change Orders</div></div>
+</div>
+</div>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+<div class="w">
+<div class="sh">
+  <h2>Field assessment to council-ready<br>roadmap in four to five weeks</h2>
+</div>
+<div class="steps">
+  <div class="step">
+    <div class="step-n">Step 01</div>
+    <h3>Assess</h3>
+    <p>On-site assessment of each selected facility using LiDAR-captured floor plans, precision digital measurement, standardized data capture, and photo documentation.</p>
+  </div>
+  <div class="step">
+    <div class="step-n">Step 02</div>
+    <h3>Prioritize</h3>
+    <p>Findings normalized across all facilities by risk, user impact, and cost. Each building ranked against the others for budget sequencing.</p>
+  </div>
+  <div class="step">
+    <div class="step-n">Step 03</div>
+    <h3>Plan</h3>
+    <p>Council-ready capital roadmap aligned to your budget cycles. Quick wins, phased investments, and procurement language included.</p>
+  </div>
+</div>
+</div>
+</section>
+
+<!-- DELIVERABLES -->
+<section class="deliv" id="deliverables">
+<div class="w">
+<div class="sh">
+  <h2>Five deliverables, one fixed fee</h2>
+  <p>Everything integrates with existing asset management and budget processes.</p>
+</div>
+<div class="del-grid">
+  <div class="del-card">
+    <div class="del-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></div>
+    <h3>Individual Facility Reports</h3>
+    <p>Scored assessment per building with photo documentation, barrier inventory, and Next Dollar Impact analysis.</p>
+  </div>
+  <div class="del-card">
+    <div class="del-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18v18H3z"/><path d="M3 9h18"/><path d="M9 3v18"/></svg></div>
+    <h3>Prioritization Matrix</h3>
+    <p>Cross-facility ranking by risk, user impact, and cost. Defensible sequencing for budget review.</p>
+  </div>
+  <div class="del-card">
+    <div class="del-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
+    <h3>Multi-Year Capital Roadmap</h3>
+    <p>Phased plan with cost estimates aligned to municipal budget cycles.</p>
+  </div>
+  <div class="del-card">
+    <div class="del-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></div>
+    <h3>Executive Summary</h3>
+    <p>One-page council briefing with current state, recommended sequence, and sample motion language.</p>
+  </div>
+  <div class="del-card">
+    <div class="del-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg></div>
+    <h3>Briefing Deck and Procurement Language</h3>
+    <p>Three-slide leadership deck. Agreement template and RFP scope language included.</p>
+  </div>
+  <div class="del-span"><p>All deliverables included in the fixed fee. Fee confirmed after site selection. No change orders.</p></div>
+</div>
+</div>
+</section>
+
+<!-- AUDIENCE -->
+<section class="audience" id="audience">
+<div class="w">
+<div class="sh">
+  <h2>Built for the teams that manage public facilities</h2>
+  <p>If your organization manages publicly accessible buildings and needs defensible data for capital planning.</p>
+</div>
+<div class="aud-tags">
+  <div class="at">Municipalities</div>
+  <div class="at">Facilities and Public Works</div>
+  <div class="at">Capital Planning and Finance</div>
+  <div class="at">CAOs and Senior Administration</div>
+  <div class="at at-hi">Indigenous Organizations</div>
+  <div class="at">Housing Authorities and School Boards</div>
+</div>
+</div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+<div class="w">
+<div class="sh"><h2>FAQ</h2></div>
+<div class="faq-list">
+<div class="fi"><button class="fq">What is the Accessibility Pilot?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="fa"><p>A fixed-scope engagement that assesses a small group of your facilities and produces a prioritized, council-ready capital planning framework.</p></div></div>
+<div class="fi"><button class="fq">How long does the pilot take?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="fa"><p>Four to five weeks for a three-to-five-facility engagement, depending on site access coordination.</p></div></div>
+<div class="fi"><button class="fq">Why not have our internal team do this?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="fa"><p>Your facility staff know their buildings. What they usually lack is a way to assess multiple buildings at the same time against a consistent scoring framework. Engineering is scoped to a single project. This pilot ranks buildings against each other so capital dollars go where they deliver the most compliance value first.</p></div></div>
+<div class="fi"><button class="fq">Does this include RHFAC certification?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="fa"><p>No. Novo Accessibility does not certify buildings. These assessments are for planning and decision-support. Certification is administered separately by the Rick Hansen Foundation.</p></div></div>
+<div class="fi"><button class="fq">What standards are used?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="fa"><p>Assessments are informed by nationally recognized accessibility best practices, including criteria from the Rick Hansen Foundation Accessibility Certification framework.</p></div></div>
+<div class="fi"><button class="fq">What procurement pathways does this support?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="fa"><p>Structured to fall within most municipalities' simplified purchasing thresholds. Also suitable for advisory pilots, sole-source justification, PSIB set-aside pathways for federal contracts, or full RFP-supported procurement.</p></div></div>
+<div class="fi"><button class="fq">Do you work with organizations across Canada?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="fa"><p>Yes. Novo Accessibility serves municipalities and public sector organizations across Canada. The assessment methodology is standardized nationally through the RHFAC framework. For locations outside our home base, we work with local RHFAC Professionals.</p></div></div>
+</div>
+</div>
+</section>
+
+<!-- CTA with photo background -->
+<section class="cta-sec">
+<div class="cta-bg"></div>
+<div class="w">
+<div class="cta-content">
+  <h2>Ready to explore a pilot?</h2>
+  <p>15-minute introductory call. If there is a fit, you receive a proposal with scope, timeline, deliverables, and a fixed fee.</p>
+  <div class="cta-btns">
+    <a href="https://calendly.com/carl-novoaccessibility/15-minute-introductory-call" target="_blank" rel="noopener" class="br"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Request 15-Minute Call</a>
+    <a href="https://github.com/Novo-Accessibility/NovoAccessibility/blob/main/pilot-overview.pdf" target="_blank" class="bo"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download Pilot Summary</a>
+  </div>
+  <p class="cta-fine">Works with simplified purchasing, advisory procurement, PSIB set-asides, and full RFP pathways.</p>
+</div>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer class="ft">
+<div class="w">
+<div class="ft-grid">
+  <div class="ft-col"><strong>Novo Accessibility</strong><p>Carl Christie, Director<br>RHFAC Candidate<br>Novo Industries Inc.</p></div>
+  <div class="ft-col"><strong>Contact</strong><p><a href="mailto:carl@novoaccessibility.com">carl@novoaccessibility.com</a><br><a href="tel:5873554677">587-355-4677</a><br>Canada</p></div>
+  <div class="ft-col"><strong>Mi'kmaw-owned</strong><p>Indigenous Business Directory registered.<br><a href="privacy.html">Privacy Policy</a><br><a href="terms.html">Terms of Service</a></p></div>
+</div>
+<div class="ft-bot"><p>&copy; 2026 Novo Industries Inc. All rights reserved.</p><p>A Novo Industries service.</p></div>
+<div class="ft-dis">Novo Accessibility does not certify buildings. These assessments are decision-support and capital planning tools. Certification, where pursued, is administered and granted exclusively by the Rick Hansen Foundation.</div>
+</div>
+</footer>
+
+<script>
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>20)});
+document.getElementById('mobileToggle').addEventListener('click',()=>{document.getElementById('navLinks').classList.toggle('open')});
+document.querySelectorAll('.fq').forEach(b=>{b.addEventListener('click',()=>{const i=b.parentElement,w=i.classList.contains('open');document.querySelectorAll('.fi').forEach(x=>x.classList.remove('open'));if(!w)i.classList.add('open')})});
+document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener('click',e=>{e.preventDefault();const t=document.querySelector(a.getAttribute('href'));if(t){t.scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('navLinks').classList.remove('open')}})});
+</script>
+</body>
+</html>
