@@ -20,7 +20,7 @@ An accessibility assessment of municipal facilities, scored against every applic
 
 A pilot covers three to five facilities over six to eight weeks and produces five deliverables: a prioritization matrix, a phased capital roadmap, a one-page executive summary, a council briefing deck, and a procurement package. The report is delivered within seven to ten business days of the final site visit.
 
-Assessment and report work is billed at $150 per hour plus GST, travel time at half that rate, and travel expenses at cost against receipts, with a written estimate of hours before work begins.
+A three-to-five facility pilot is $8,000 plus GST. It is one fixed fee, the same whether three, four or five facilities are assessed, quoted in writing before work starts and not varied unless the scope changes in writing. It assumes ordinary civic buildings of up to about 20,000 square feet and three storeys, with no pool, arena or residential units. Travel beyond the local area is quoted with the engagement.
 
 Novo does not certify buildings. RHF Accessibility Certified and Certified Gold status are adjudicated by the Rick Hansen Foundation on the RHFAC Registry.
 
