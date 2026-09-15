@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Novo Accessibility — Municipal Accessibility Capital Planning | Canada</title>
-<meta name="description" content="Council-ready accessibility capital planning for municipalities. RHFAC Professional assessments with defensible prioritization, Quick Wins, and procurement-ready deliverables in a fixed-fee pilot from $8,000. Serving all of Canada.">
+<meta name="description" content="Council-ready accessibility capital planning for municipalities. Laser-measured RHFAC Professional assessments, severity-mapped floor plans, every fix ranked by points per dollar, in a fixed-fee pilot of $8,000 plus GST. Serving all of Canada.">
 <link rel="canonical" href="https://novoaccessibility.com/">
 <meta name="theme-color" content="#1A3A5C">
 <meta name="format-detection" content="telephone=no">
@@ -56,7 +56,7 @@
       "founder": {
         "@type": "Person",
         "name": "Carl Christie",
-        "jobTitle": "Founder",
+        "jobTitle": "Director",
         "hasCredential": {
           "@type": "EducationalOccupationalCredential",
           "credentialCategory": "Professional Designation",
@@ -96,7 +96,9 @@
         { "@type": "Question", "name": "Can this report be used for a grant application?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. The scored findings, phased capital plan and cost ranges are the needs documentation programs ask for, including the federal Enabling Accessibility Fund and the RBC Barrier Buster Grants." } },
         { "@type": "Question", "name": "Does the sample report show everything we would receive?", "acceptedAnswer": { "@type": "Answer", "text": "It shows three of the five deliverables in full \u2014 prioritized findings, the phased capital roadmap and the executive summary. The council briefing deck and procurement package are produced from the same assessment data and provided with an engagement." } },
         { "@type": "Question", "name": "Why is the sample report about a town that does not exist?", "acceptedAnswer": { "@type": "Answer", "text": "Because a client's assessment is theirs. Publishing a real municipality's barriers, scores and costs would be a breach of confidence. Clearwater is fictional; the methodology, clause references and arithmetic are exactly what a real engagement produces." } },
-        { "@type": "Question", "name": "How long until we have the report?", "acceptedAnswer": { "@type": "Answer", "text": "A pilot runs six to eight weeks end to end. The written report is delivered within seven to ten business days of the final site visit." } }
+        { "@type": "Question", "name": "How long until we have the report?", "acceptedAnswer": { "@type": "Answer", "text": "A pilot runs six to eight weeks end to end. The written report is delivered within seven to ten business days of the final site visit." } },
+        { "@type": "Question", "name": "How are findings measured and located?", "acceptedAnswer": { "@type": "Answer", "text": "Every measurable finding is taken on site with a Bosch GLM165-27CGL laser measure, accurate to 1/16 inch, and a force gauge and lux meter where the item calls for them. Each finding is then pinned to a floor plan and shaded by severity, so a reader who has never walked the building can see where the problems are." } },
+        { "@type": "Question", "name": "What happens after the pilot?", "acceptedAnswer": { "@type": "Answer", "text": "Most municipalities have more than five facilities, so the usual next step is the rest of the portfolio on the same method. After the first year of work, a reassessment measures progress against the baseline. If you decide to pursue RHF certification, the report shows which prerequisites must be cleared first; certification itself is adjudicated by the Rick Hansen Foundation." } }
       
       ]
     }
@@ -487,6 +489,34 @@ footer{background:#0E2438;padding:36px 0 22px;}
   section{padding:20px 0;page-break-inside:avoid;}
   a[href^="http"]::after{content:" (" attr(href) ")";font-size:9pt;color:#555;}
 }
+
+/* ---- 2026-09-15: proof line, sample-report tour, severity map ---- */
+.hero-proof{list-style:none;display:flex;flex-wrap:wrap;gap:8px 18px;margin:-8px 0 24px;padding:0;}
+.hero-proof li{font-size:.9rem;color:var(--on-dark);display:flex;align-items:center;gap:8px;}
+.hero-proof li::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--mint);flex:0 0 auto;}
+.tour{background:var(--white);border-radius:14px;padding:38px;box-shadow:0 20px 60px rgba(0,0,0,.35);margin-top:36px;}
+.tour h3{font-family:var(--font-display);font-size:1.3rem;font-weight:400;color:var(--navy);margin-bottom:6px;}
+.tour > p{font-size:.95rem;color:var(--muted);max-width:70ch;}
+.map-fig{margin:22px 0 10px;border:1px solid var(--border);border-radius:10px;padding:14px;background:#fff;}
+.map-fig svg{width:100%;height:auto;display:block;}
+.map-fig figcaption{font-size:.86rem;color:var(--muted);margin-top:10px;line-height:1.6;}
+.sev-key{list-style:none;display:flex;flex-wrap:wrap;gap:6px 18px;padding:0;margin:10px 0 0;}
+.sev-key li{display:flex;align-items:center;gap:7px;font-size:.86rem;font-weight:600;color:var(--text);}
+.sev-key i{width:13px;height:13px;border-radius:50%;display:block;}
+.tour-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;list-style:none;padding:0;margin:22px 0 0;}
+.tour-grid li{background:var(--off);border-radius:8px;padding:16px;border-top:3px solid var(--teal);}
+.tour-grid li:nth-child(2){border-top-color:var(--amber);}
+.tour-grid li:nth-child(3){border-top-color:var(--coral-deep);}
+.tour-grid li:nth-child(4){border-top-color:var(--navy);}
+.tour-grid h4{font-size:.95rem;color:var(--navy);margin-bottom:6px;}
+.tour-grid p{font-size:.86rem;color:var(--muted);line-height:1.6;margin:0;}
+.tour-grid .pg{display:block;font-size:.78rem;font-weight:700;color:var(--teal2);margin-top:8px;}
+@media (max-width:900px){.tour-grid{grid-template-columns:1fr 1fr;}.tour{padding:24px;}}
+@media (max-width:560px){.tour-grid{grid-template-columns:1fr;}}
+.grant-uses{margin:12px 0 0 20px;font-size:.92rem;color:var(--muted);line-height:1.7;}
+.ndi-table td.ndi-pts{white-space:nowrap;}
+.a11y a{color:var(--mint);text-decoration:underline;}
+.ndi-table th{white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -546,9 +576,14 @@ footer{background:#0E2438;padding:36px 0 22px;}
       <span class="eyebrow on-dark">Accessibility, Compliance &amp; Facility Assessment Consulting</span>
       <h1 id="hero-title">Turn accessibility and compliance uncertainty into <em>a plan you can defend.</em></h1>
       <p class="hero-sub">A scoped pilot gives you the scored data and council-ready documentation to prioritize with confidence, not guesswork.</p>
+      <ul class="hero-proof" aria-label="How the assessment is done">
+        <li>Laser-measured to 1/16&nbsp;inch</li>
+        <li>Every finding pinned on a floor plan</li>
+        <li>Every fix ranked by points per dollar</li>
+      </ul>
       <div class="hero-ctas">
         <a href="#contact" class="btn btn-primary">Request a 15-Minute Briefing</a>
-        <a href="#report" class="btn btn-outline-dark">See the Report</a>
+        <a href="#inside" class="btn btn-outline-dark">See Inside the Sample Report</a>
       </div>
       <p class="hero-for-label" id="built-for">Built for</p>
       <ul class="role-tags" aria-labelledby="built-for">
@@ -575,7 +610,7 @@ footer{background:#0E2438;padding:36px 0 22px;}
             <svg class="dl-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
             Download the Sample Report <span class="visually-hidden">(PDF)</span>
           </a>
-          <p class="hero-dl-note">Full 19-page sample assessment.<br>No form, no email required.</p>
+          <p class="hero-dl-note">Full 24-page sample assessment, with severity-mapped floor plans.<br>No form, no email required.</p>
         </div>
       </div>
     </div>
@@ -670,26 +705,26 @@ footer{background:#0E2438;padding:36px 0 22px;}
       <div class="proof-top">
         <div class="proof-title">
           <h3>This is the report your council actually sees.</h3>
-          <p>Illustrative example — 5-facility municipal portfolio</p>
+          <p>Illustrative example — one library in full, from a five-facility municipal pilot</p>
         </div>
         <span class="proof-tag">Illustrative example, not a completed engagement</span>
       </div>
       <ul class="proof-stats">
-        <li class="p-stat"><div class="p-val">5</div><div class="p-lbl">Facilities assessed</div></li>
-        <li class="p-stat"><div class="p-val">8</div><div class="p-lbl">Systemic findings</div></li>
-        <li class="p-stat"><div class="p-val">28</div><div class="p-lbl">Work items</div></li>
-        <li class="p-stat"><div class="p-val">2-yr</div><div class="p-lbl">Capital plan</div></li>
-        <li class="p-stat"><div class="p-val">$88–153K</div><div class="p-lbl">Est. portfolio remediation</div></li>
+        <li class="p-stat"><div class="p-val">56%</div><div class="p-lbl">Library score (709 of 1,259 points)</div></li>
+        <li class="p-stat"><div class="p-val">28</div><div class="p-lbl">Findings, each measured and pinned</div></li>
+        <li class="p-stat"><div class="p-val">47</div><div class="p-lbl">Points to RHF Certified</div></li>
+        <li class="p-stat"><div class="p-val">8</div><div class="p-lbl">Barriers repeated across the 5 facilities</div></li>
+        <li class="p-stat"><div class="p-val">$18–31K</div><div class="p-lbl">Saved by bundling those 8 as one contract</div></li>
       </ul>
-      <p class="roadmap-label" id="seq-label">Capital Sequencing — Next Dollar Impact ranked first</p>
+      <p class="roadmap-label" id="seq-label">The library’s capital plan — life safety first, then ranked by points per dollar</p>
       <ul class="roadmap" aria-labelledby="seq-label">
-        <li class="rm-row rm-highlight"><span class="rm-name">Phase 0 — Life safety</span><div class="rm-track" aria-hidden="true"><div class="rm-fill" style="width:100%;background:var(--coral-deep);"><span class="rm-inline-cost">$11.5–19.9K</span></div></div><span class="rm-cost"><span class="visually-hidden">$11,460–$19,860, </span>Immediate</span></li>
-        <li class="rm-row"><span class="rm-name">Phase 1 — Year 1</span><div class="rm-track" aria-hidden="true"><div class="rm-fill" style="width:100%;background:var(--teal);"><span class="rm-inline-cost">$31.7–53.2K</span></div></div><span class="rm-cost"><span class="visually-hidden">$31,660–$53,170, </span>Budget cycle 1</span></li>
-        <li class="rm-row"><span class="rm-name">Phase 2 — Year 2</span><div class="rm-track" aria-hidden="true"><div class="rm-fill" style="width:94%;background:var(--teal2);"><span class="rm-inline-cost">$28.0–50.4K</span></div></div><span class="rm-cost"><span class="visually-hidden">$28,000–$50,400, </span>Budget cycle 2</span></li>
+        <li class="rm-row rm-highlight"><span class="rm-name">Phase 0 — Life safety</span><div class="rm-track" aria-hidden="true"><div class="rm-fill" style="width:34%;background:var(--coral-deep);"><span class="rm-inline-cost">$11.5K–$19.9K</span></div></div><span class="rm-cost"><span class="visually-hidden">$11,460–$19,860, </span>Immediate</span></li>
+        <li class="rm-row"><span class="rm-name">Phase 1 — Year 1</span><div class="rm-track" aria-hidden="true"><div class="rm-fill" style="width:100%;background:var(--teal);"><span class="rm-inline-cost">$37.2K–$63.6K</span></div></div><span class="rm-cost"><span class="visually-hidden">$37,160–$63,570, </span>Reaches Certified</span></li>
+        <li class="rm-row"><span class="rm-name">Phase 2 — Year 2</span><div class="rm-track" aria-hidden="true"><div class="rm-fill" style="width:62%;background:var(--teal2);"><span class="rm-inline-cost">$22.5K–$40.0K</span></div></div><span class="rm-cost"><span class="visually-hidden">$22,500–$40,000, </span>Budget cycle 2</span></li>
       </ul>
-      <p class="roadmap-note">Bar length reflects sequencing priority, not just dollar size. The worked facility totals $71,120–$123,430 across the three phases, of which the low-cost actions that close the 47-point gap to RHF Accessibility Certified account for $1,760–$3,870.</p>
+      <p class="roadmap-note">Bar length shows the midpoint of each phase’s cost. The library’s full plan is $71,120–$123,430. After the life-safety work, six low-cost actions costing $3,760–$6,370 carry it past the 756-point Certified threshold; the ramp rebuild in Year 1 meets the accessible-entrance prerequisite that certification also requires.</p>
       <div class="proof-dl">
-        <p>The complete 19-page sample assessment — five facilities, scores, costings and portfolio roll-up. No form, no email, no gate.</p>
+        <p>The complete 24-page sample assessment — one library in full, severity-mapped floor plans, and the five-facility roll-up. No form, no email, no gate.</p>
         <a href="Novo_Accessibility_Sample_Report_Clearwater.pdf" download class="btn btn-gold">
           <svg class="dl-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
           Download the Full Sample Report <span class="visually-hidden">(PDF)</span>
@@ -699,9 +734,43 @@ footer{background:#0E2438;padding:36px 0 22px;}
   </div>
 </section>
 
-<section id="ndi" style="background:var(--navy);padding-top:0;" aria-labelledby="ndi-title">
+
+<section id="inside" aria-labelledby="inside-title">
   <div class="w">
-    <div class="sec-head on-dark" style="max-width:100%;padding-top:76px;">
+    <div class="sec-head">
+      <span class="eyebrow">Inside the Sample Report</span>
+      <h2 id="inside-title">Council sees where the problems are, not just a list.</h2>
+      <p>Most councillors have never walked the building they are funding. Every finding in a Novo report is pinned to the room it was recorded in and shaded by how serious it is, so the capital plan reads as a map.</p>
+    </div>
+    <div class="tour">
+      <h3>Severity map — main floor and site approach</h3>
+      <p>From the sample report, Section 05. Numbers are finding numbers. A whole-floor failure, such as missing visual fire alarms, is drawn as a band around the floor rather than a single pin, so it is never understated.</p>
+      <figure class="map-fig">
+        <svg viewBox="0 0 1000 775" role="img" aria-labelledby="map-title map-desc" focusable="false"><title id="map-title">Severity map, main floor and site approach, Clearwater Public Library (sample)</title><desc id="map-desc">Schematic floor plan. The accessible washrooms are shaded critical, with findings 15, 16 and 17. The periodical stacks, elevator, lobby, service desk, self-checkout and exterior ramp are shaded high. The parking crossing is medium and the accessible parking is advisory. A red band around the floor marks finding 23, no visual fire alarms anywhere on the floor.</desc><rect x="50" y="50" width="900" height="520" rx="7" fill="none" stroke="#B24A2C" stroke-width="6" opacity=".45"/><rect x="60" y="60" width="880" height="500" rx="3" fill="#fff" stroke="#1A3A5C" stroke-width="3.2"/><rect x="60" y="60" width="370" height="200" rx="3" fill="#FFFFFF" stroke="#CFC8B9" stroke-width="1.3" /><text x="245" y="164" text-anchor="middle" font-size="15.0" fill="#1B2A38" font-family="Inter, sans-serif">Main collection</text><rect x="430" y="60" width="260" height="200" rx="3" fill="#FFFFFF" stroke="#CFC8B9" stroke-width="1.3" /><text x="560" y="164" text-anchor="middle" font-size="15.0" fill="#1B2A38" font-family="Inter, sans-serif">Exhibit space</text><rect x="690" y="60" width="250" height="200" rx="3" fill="#FFFFFF" stroke="#CFC8B9" stroke-width="1.3" /><text x="815" y="164" text-anchor="middle" font-size="15.0" fill="#1B2A38" font-family="Inter, sans-serif">Reference area</text><rect x="60" y="260" width="880" height="70" rx="3" fill="#FFFFFF" stroke="#CFC8B9" stroke-width="1.3" /><text x="500" y="299" text-anchor="middle" font-size="15.0" fill="#1B2A38" font-family="Inter, sans-serif">Main circulation corridor</text><rect x="60" y="330" width="190" height="230" rx="3" fill="#FFFFFF" stroke="#CFC8B9" stroke-width="1.3" /><text x="155" y="449" text-anchor="middle" font-size="15.0" fill="#1B2A38" font-family="Inter, sans-serif">Children&#x27;s area</text><rect x="250" y="330" width="140" height="230" rx="3" fill="rgba(196,96,63,.15)" stroke="#CFC8B9" stroke-width="1.3" /><text x="320" y="355" text-anchor="middle" font-size="12.5" fill="#1B2A38" font-family="Inter, sans-serif">Periodical stacks</text><text x="320" y="372" text-anchor="middle" font-size="10" letter-spacing="1.2" font-weight="700" fill="#C4603F" font-family="Inter, sans-serif">HIGH</text><circle cx="303.0" cy="536" r="14" fill="#C4603F" stroke="#fff" stroke-width="2.2"/><text x="303.0" y="541" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">8</text><circle cx="337.0" cy="536" r="14" fill="#C4603F" stroke="#fff" stroke-width="2.2"/><text x="337.0" y="541" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">25</text><rect x="390" y="330" width="85" height="90" rx="3" fill="rgba(196,96,63,.15)" stroke="#CFC8B9" stroke-width="1.3" /><text x="432" y="355" text-anchor="middle" font-size="12.5" fill="#1B2A38" font-family="Inter, sans-serif">Elevator</text><text x="432" y="372" text-anchor="middle" font-size="10" letter-spacing="1.2" font-weight="700" fill="#C4603F" font-family="Inter, sans-serif">HIGH</text><circle cx="415.5" cy="396" r="14" fill="#C4603F" stroke="#fff" stroke-width="2.2"/><text x="415.5" y="401" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">9</text><circle cx="449.5" cy="396" r="14" fill="#B8862F" stroke="#fff" stroke-width="2.2"/><text x="449.5" y="401" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">10</text><rect x="475" y="330" width="85" height="90" rx="3" fill="#FFFFFF" stroke="#CFC8B9" stroke-width="1.3" /><text x="518" y="379" text-anchor="middle" font-size="12.5" fill="#1B2A38" font-family="Inter, sans-serif">Stairs</text><rect x="390" y="420" width="170" height="140" rx="3" fill="rgba(196,96,63,.15)" stroke="#CFC8B9" stroke-width="1.3" /><text x="475" y="445" text-anchor="middle" font-size="15.0" fill="#1B2A38" font-family="Inter, sans-serif">Lobby and entrance</text><text x="475" y="464" text-anchor="middle" font-size="10" letter-spacing="1.2" font-weight="700" fill="#C4603F" font-family="Inter, sans-serif">HIGH</text><circle cx="424.0" cy="536" r="14" fill="#B8862F" stroke="#fff" stroke-width="2.2"/><text x="424.0" y="541" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">6</text><circle cx="458.0" cy="536" r="14" fill="#C4603F" stroke="#fff" stroke-width="2.2"/><text x="458.0" y="541" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">7</text><circle cx="492.0" cy="536" r="14" fill="#C4603F" stroke="#fff" stroke-width="2.2"/><text x="492.0" y="541" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">18</text><circle cx="526.0" cy="536" r="14" fill="#C4603F" stroke="#fff" stroke-width="2.2"/><text x="526.0" y="541" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">19</text><rect x="560" y="330" width="195" height="115" rx="3" fill="rgba(196,96,63,.15)" stroke="#CFC8B9" stroke-width="1.3" /><text x="658" y="355" text-anchor="middle" font-size="15.0" fill="#1B2A38" font-family="Inter, sans-serif">Service desk</text><text x="658" y="374" text-anchor="middle" font-size="10" letter-spacing="1.2" font-weight="700" fill="#C4603F" font-family="Inter, sans-serif">HIGH</text><circle cx="640.5" cy="421" r="14" fill="#C4603F" stroke="#fff" stroke-width="2.2"/><text x="640.5" y="426" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">11</text><circle cx="674.5" cy="421" r="14" fill="#C4603F" stroke="#fff" stroke-width="2.2"/><text x="674.5" y="426" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">12</text><rect x="560" y="445" width="195" height="115" rx="3" fill="rgba(196,96,63,.15)" stroke="#CFC8B9" stroke-width="1.3" /><text x="658" y="470" text-anchor="middle" font-size="15.0" fill="#1B2A38" font-family="Inter, sans-serif">Self-checkout</text><text x="658" y="489" text-anchor="middle" font-size="10" letter-spacing="1.2" font-weight="700" fill="#C4603F" font-family="Inter, sans-serif">HIGH</text><circle cx="640.5" cy="536" r="14" fill="#C4603F" stroke="#fff" stroke-width="2.2"/><text x="640.5" y="541" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">13</text><circle cx="674.5" cy="536" r="14" fill="#C4603F" stroke="#fff" stroke-width="2.2"/><text x="674.5" y="541" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">26</text><rect x="755" y="330" width="185" height="115" rx="3" fill="rgba(178,74,44,.17)" stroke="#CFC8B9" stroke-width="1.3" /><text x="848" y="355" text-anchor="middle" font-size="15.0" fill="#1B2A38" font-family="Inter, sans-serif">Accessible washrooms</text><text x="848" y="374" text-anchor="middle" font-size="10" letter-spacing="1.2" font-weight="700" fill="#B24A2C" font-family="Inter, sans-serif">CRITICAL</text><circle cx="813.5" cy="421" r="14" fill="#B24A2C" stroke="#fff" stroke-width="2.2"/><text x="813.5" y="426" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">15</text><circle cx="847.5" cy="421" r="14" fill="#B24A2C" stroke="#fff" stroke-width="2.2"/><text x="847.5" y="426" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">16</text><circle cx="881.5" cy="421" r="14" fill="#B8862F" stroke="#fff" stroke-width="2.2"/><text x="881.5" y="426" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">17</text><rect x="755" y="445" width="185" height="115" rx="3" fill="#FFFFFF" stroke="#CFC8B9" stroke-width="1.3" /><text x="848" y="506" text-anchor="middle" font-size="15.0" fill="#1B2A38" font-family="Inter, sans-serif">Meeting room</text><rect x="60" y="610" width="235" height="125" rx="3" fill="rgba(207,200,185,.28)" stroke="#B9B2A3" stroke-width="1.3" stroke-dasharray="5 4"/><text x="178" y="635" text-anchor="middle" font-size="15.0" fill="#1B2A38" font-family="Inter, sans-serif">Accessible parking</text><text x="178" y="654" text-anchor="middle" font-size="10" letter-spacing="1.2" font-weight="700" fill="#9A927F" font-family="Inter, sans-serif">ADVISORY</text><circle cx="177.5" cy="711" r="14" fill="#9A927F" stroke="#fff" stroke-width="2.2"/><text x="177.5" y="716" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">2</text><rect x="310" y="610" width="70" height="125" rx="3" fill="rgba(184,134,47,.15)" stroke="#B9B2A3" stroke-width="1.3" stroke-dasharray="5 4"/><text x="345" y="635" text-anchor="middle" font-size="12.5" fill="#1B2A38" font-family="Inter, sans-serif">Crossing</text><text x="345" y="652" text-anchor="middle" font-size="10" letter-spacing="1.2" font-weight="700" fill="#B8862F" font-family="Inter, sans-serif">MEDIUM</text><circle cx="345.0" cy="711" r="14" fill="#B8862F" stroke="#fff" stroke-width="2.2"/><text x="345.0" y="716" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">1</text><rect x="390" y="610" width="170" height="125" rx="3" fill="rgba(196,96,63,.15)" stroke="#B9B2A3" stroke-width="1.3" stroke-dasharray="5 4"/><text x="475" y="635" text-anchor="middle" font-size="15.0" fill="#1B2A38" font-family="Inter, sans-serif">Exterior ramp</text><text x="475" y="654" text-anchor="middle" font-size="10" letter-spacing="1.2" font-weight="700" fill="#C4603F" font-family="Inter, sans-serif">HIGH</text><circle cx="441.0" cy="711" r="14" fill="#C4603F" stroke="#fff" stroke-width="2.2"/><text x="441.0" y="716" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">3</text><circle cx="475.0" cy="711" r="14" fill="#C4603F" stroke="#fff" stroke-width="2.2"/><text x="475.0" y="716" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">4</text><circle cx="509.0" cy="711" r="14" fill="#C4603F" stroke="#fff" stroke-width="2.2"/><text x="509.0" y="716" text-anchor="middle" font-size="13.5" font-weight="700" fill="#fff" font-family="Inter, sans-serif">5</text><rect x="575" y="610" width="115" height="125" rx="3" fill="#FFFFFF" stroke="#B9B2A3" stroke-width="1.3" stroke-dasharray="5 4"/><text x="632" y="676" text-anchor="middle" font-size="12.5" fill="#1B2A38" font-family="Inter, sans-serif">Exterior stairs</text><rect x="705" y="610" width="235" height="125" rx="3" fill="#FFFFFF" stroke="#B9B2A3" stroke-width="1.3" stroke-dasharray="5 4"/><text x="822" y="676" text-anchor="middle" font-size="15.0" fill="#1B2A38" font-family="Inter, sans-serif">Drop-off zone</text><text x="60" y="598" font-size="10.5" letter-spacing="1.3" font-weight="700" fill="#5D6B78" font-family="Inter, sans-serif">SITE APPROACH</text></svg>
+        <figcaption>Schematic, not to scale — drawn to show where each finding was observed. Clearwater is a fictional town; the method and the arithmetic are what a real engagement produces.
+          <ul class="sev-key" aria-label="Severity colours"><li><i style="background:#B24A2C" aria-hidden="true"></i>Critical — life safety</li><li><i style="background:#C4603F" aria-hidden="true"></i>High — fails a B651 clause</li><li><i style="background:#B8862F" aria-hidden="true"></i>Medium — at the limit</li><li><i style="background:#9A927F" aria-hidden="true"></i>Advisory — best practice</li></ul>
+        </figcaption>
+      </figure>
+      <ul class="tour-grid">
+        <li><h4>Zone cost index</h4><p>Every area on the plan, its worst finding, the phase that fixes it and what that costs — reconciling to the capital plan to the dollar.</p><span class="pg">Sample report, Section 05</span></li>
+        <li><h4>Next Dollar ranking</h4><p>Life safety first, then every fix ranked by points recovered per $1,000, with a running total that shows where the Certified threshold is crossed.</p><span class="pg">Sample report, Section 06</span></li>
+        <li><h4>Phase 0 life safety</h4><p>Visual fire alarms, an area of rescue and grab bars — $11,460–$19,860 — corrected first, whatever the score.</p><span class="pg">Sample report, Section 07</span></li>
+        <li><h4>Measured findings</h4><p>Each of the 28 findings shows the measured value, the CSA/ASC B651:23 clause, the RHFAC survey item and points, the cost and its pin.</p><span class="pg">Sample report, Section 04</span></li>
+      </ul>
+      <div class="proof-dl">
+        <p>For larger buildings, tenders or grant applications, plans can also be drawn to measured dimensions.</p>
+        <a href="Novo_Accessibility_Sample_Report_Clearwater.pdf" download class="btn btn-gold">
+          <svg class="dl-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>
+          Download the Sample Report <span class="visually-hidden">(PDF, 24 pages)</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ndi" style="background:var(--navy);" aria-labelledby="ndi-title">
+  <div class="w">
+    <div class="sec-head on-dark" style="max-width:100%;">
       <span class="eyebrow on-dark">Methodology</span>
       <h2 id="ndi-title">Next Dollar Impact.</h2>
     </div>
@@ -713,22 +782,22 @@ footer{background:#0E2438;padding:36px 0 22px;}
           <p>“The purpose of the report is not documentation. It is a decision-support tool. Every section should make the next capital decision easier.”</p>
         </blockquote>
       </div>
-      <div class="ndi-table-wrap">
+      <div class="ndi-table-wrap" tabindex="0" role="region" aria-label="Next Dollar Impact table, scrolls sideways on small screens">
         <table class="ndi-table">
-          <caption class="ndi-caption">Ranked by score gain per dollar spent</caption>
+          <caption class="ndi-caption">After life safety: ranked by points gained per $1,000 (midpoint cost)</caption>
           <thead>
-            <tr><th scope="col">Action</th><th scope="col">Est. Cost</th><th scope="col">Points Gained</th></tr>
+            <tr><th scope="col">Action</th><th scope="col">Est. Cost</th><th scope="col">Points</th><th scope="col">Per $1K</th></tr>
           </thead>
           <tbody>
-            <tr class="ndi-tier-high"><td>Reposition periodical shelving to restore aisle width</td><td class="ndi-cost">$0</td><td><span class="ndi-badge ndi-high">+18</span></td></tr>
-            <tr class="ndi-tier-high"><td>Adjust entrance door closer to 38N maximum</td><td class="ndi-cost">$180–$350</td><td><span class="ndi-badge ndi-high">+8</span></td></tr>
-            <tr class="ndi-tier-high"><td>Directional signage to the accessible washroom</td><td class="ndi-cost">$180–$320</td><td><span class="ndi-badge ndi-high">+6</span></td></tr>
-            <tr class="ndi-tier-med"><td>Remediate website alt text and colour contrast</td><td class="ndi-cost">$800–$2,000</td><td><span class="ndi-badge ndi-med">+6</span></td></tr>
-            <tr class="ndi-tier-med"><td>Reprogram elevator audio floor announcements</td><td class="ndi-cost">$200–$400</td><td><span class="ndi-badge ndi-med">+5</span></td></tr>
-            <tr class="ndi-tier-low"><td>Repaint accessible parking crossing markings</td><td class="ndi-cost">$400–$800</td><td><span class="ndi-badge ndi-low">+4</span></td></tr>
+            <tr class="ndi-tier-high"><td>Move periodical shelving (1,200 mm aisle)</td><td class="ndi-cost">$0</td><td class="ndi-pts"><span class="ndi-badge ndi-high">+8</span></td><td class="ndi-cost">Free</td></tr>
+            <tr class="ndi-tier-med"><td>Directional sign to accessible washroom</td><td class="ndi-cost">$180–$320</td><td class="ndi-pts"><span class="ndi-badge ndi-med">+5</span></td><td class="ndi-cost">20.0</td></tr>
+            <tr class="ndi-tier-med"><td>Adjust entrance door closer to 38 N</td><td class="ndi-cost">$180–$350</td><td class="ndi-pts"><span class="ndi-badge ndi-med">+5</span></td><td class="ndi-cost">18.9</td></tr>
+            <tr class="ndi-tier-low"><td>Reprogram elevator audio announcements</td><td class="ndi-cost">$200–$400</td><td class="ndi-pts"><span class="ndi-badge ndi-low">+4</span></td><td class="ndi-cost">13.3</td></tr>
+            <tr class="ndi-tier-low"><td>Repaint parking crossing markings</td><td class="ndi-cost">$400–$800</td><td class="ndi-pts"><span class="ndi-badge ndi-low">+3</span></td><td class="ndi-cost">5.0</td></tr>
+            <tr class="ndi-tier-high"><td>Lowered service counter section</td><td class="ndi-cost">$2,800–$4,500</td><td class="ndi-pts"><span class="ndi-badge ndi-high">+10</span></td><td class="ndi-cost">2.7</td></tr>
           </tbody>
         </table>
-        <p class="ndi-foot">Illustrative example, taken from the sample report you can download above. These six actions total $1,760–$3,870 and close the 47-point gap to the RHF Accessibility Certified threshold. Findings and costs vary by facility.</p>
+        <p class="ndi-foot">Illustrative example from the sample report. The mandatory life-safety work recovers 15 of the 47 points needed; these six actions, totalling $3,760–$6,370, recover 35 more and pass the RHF Accessibility Certified threshold. A score alone does not certify — RHF also requires an accessible public entrance, so the sample schedules its ramp rebuild in Year 1. Findings and costs vary by facility.</p>
       </div>
     </div>
   </div>
@@ -739,15 +808,15 @@ footer{background:#0E2438;padding:36px 0 22px;}
     <div class="sec-head">
       <span class="eyebrow">Quick Wins &amp; Procurement</span>
       <h2 id="procurement-title">Visible progress before your next budget cycle.</h2>
-      <p>Quick Wins are immediate, operating-budget improvements your team can approve without a capital motion: signage, lever hardware, threshold strips, lighting.</p>
+      <p>Quick Wins are low-cost improvements your team can usually approve without a capital motion: signage, door hardware, line painting, shelving layout.</p>
     </div>
     <div class="qw-proc">
       <div>
         <p style="font-size:1rem;color:var(--muted);line-height:1.75;">Real progress council can report publicly while the larger capital plan moves through approval, identified in every pilot.</p>
         <ul class="qw-facts">
-          <li class="qw-fact"><div class="qw-fact-val">6</div><div class="qw-fact-lbl">Quick Wins in the illustrative example</div></li>
-          <li class="qw-fact"><div class="qw-fact-val">$1.8–3.9K</div><div class="qw-fact-lbl">Estimated combined cost</div></li>
-          <li class="qw-fact"><div class="qw-fact-val">30 days</div><div class="qw-fact-lbl">To visible progress</div></li>
+          <li class="qw-fact"><div class="qw-fact-val">6</div><div class="qw-fact-lbl">Gap-closing actions in the illustrative example</div></li>
+          <li class="qw-fact"><div class="qw-fact-val">$3.8–6.4K</div><div class="qw-fact-lbl">Estimated combined cost</div></li>
+          <li class="qw-fact"><div class="qw-fact-val">5 of 6</div><div class="qw-fact-lbl">Under $1,000 each</div></li>
         </ul>
       </div>
       <div class="proc-note">
@@ -776,19 +845,24 @@ footer{background:#0E2438;padding:36px 0 22px;}
         <span class="fund-tag">Federal</span>
         <h3>Enabling Accessibility Fund</h3>
         <p class="fund-amt">Up to $125,000</p>
-        <p>Small Projects stream. Municipalities are eligible. Covers construction and renovation that improves accessibility — ramps, universal washrooms, tactile indicators, signage and door hardware all fall inside scope.</p>
-        <p class="status">Current intake closed; the next call has not been announced. We confirm status before you cite a figure to council.</p>
+        <p>Small projects component, Employment and Social Development Canada. Municipalities are eligible. Covers construction and renovation that improves accessibility — ramps, universal washrooms, tactile indicators, signage and door hardware all fall inside scope.</p>
+        <p class="status">As of September 2026 no small projects intake is open; the last ran May to July 2024. We confirm status before you cite a figure to council.</p>
       </div>
       <div class="fund-card">
         <span class="fund-tag">National</span>
         <h3>RBC Barrier Buster Grants</h3>
         <p class="fund-amt">Up to $40,000</p>
         <p>Rick Hansen Foundation with RBC and RBC Foundation. Sized for the Quick Wins and mid-cost items — signage, lever hardware, lighting and wayfinding.</p>
-        <p class="status">The 2026 round closed with 40 recipients announced in June 2026. We confirm whether a further round is planned.</p>
+        <p class="status">Applications are closed; 40 recipients were announced during National AccessAbility Week, May 31 to June 6, 2026. We confirm whether a further round is planned.</p>
       </div>
     </div>
     <div class="fund-note">
-      <p><strong>One assessment, two uses.</strong> The scored findings, phased capital plan and cost ranges in your report are the needs documentation these programs ask for. A single portfolio submission covering several facilities competes considerably better than separate applications building by building.</p>
+      <p><strong>One assessment, two uses.</strong> The scored findings, phased capital plan and cost ranges in your report are the needs documentation these programs ask for:</p>
+      <ul class="grant-uses">
+        <li><strong>Need:</strong> each barrier is measured and cited to CSA/ASC B651:23, with its location on a floor plan.</li>
+        <li><strong>Scope and budget:</strong> every fix carries a cost range, grouped by phase and by room.</li>
+        <li><strong>Impact:</strong> the points each fix recovers show how the project moves the building toward RHF certification.</li>
+      </ul>
     </div>
   </div>
 </section>
@@ -821,7 +895,7 @@ footer{background:#0E2438;padding:36px 0 22px;}
           </tr>
           <tr class="us">
             <td>Novo Accessibility</td>
-            <td>Every barrier scored, costed, ranked by compliance points gained per dollar, and phased across budget cycles.</td>
+            <td>Every barrier laser-measured, pinned on a floor plan, costed, ranked by compliance points gained per dollar, and phased across budget cycles.</td>
             <td>We do not certify. Certification stays with the Rick Hansen Foundation, and our report is built to get you there.</td>
           </tr>
         </tbody>
@@ -834,16 +908,17 @@ footer{background:#0E2438;padding:36px 0 22px;}
   <div class="w about-inner">
     <div>
       <div class="about-photo-wrap">
-        <img src="carl-christie.jpg" width="120" height="120" alt="Carl Christie, Founder of Novo Accessibility" class="about-photo" loading="lazy" decoding="async">
+        <img src="carl-christie.jpg" width="120" height="120" alt="Carl Christie, Director of Novo Accessibility" class="about-photo" loading="lazy" decoding="async">
       </div>
       <span class="eyebrow on-dark">Who Is Behind the Assessment</span>
       <h2 id="about-title">A practice serving all of Canada.</h2>
-      <p>Novo Accessibility is founded and led by Carl Christie. Assessments are conducted using RHFAC-informed methodology, combining formal credentials with firsthand commitment to accessibility.</p>
+      <p>Novo Accessibility is led by Carl Christie, Director and RHFAC Professional. Every finding is measured on site rather than estimated, and every figure in a report is computed from the findings rather than typed.</p>
       <p class="about-note">Now accepting municipalities for the first pilot cohort.</p>
     </div>
     <ul class="credential-list">
       <li><span class="cred-dot" aria-hidden="true"></span><div><strong>RHFAC Professional — Rick Hansen Foundation</strong><span class="cred-desc">Certification of buildings is administered exclusively by the Rick Hansen Foundation.</span></div></li>
-            <li><span class="cred-dot" aria-hidden="true"></span><div><strong>CanadaBuys / SAP Ariba</strong><span class="cred-desc">ANID AN11298778565. Searchable by procurement officers nationally.</span></div></li>
+      <li><span class="cred-dot" aria-hidden="true"></span><div><strong>Measured, not estimated</strong><span class="cred-desc">Bosch GLM165-27CGL laser measure, accurate to 1/16 inch, with force and light readings where the survey item calls for them.</span></div></li>
+      <li><span class="cred-dot" aria-hidden="true"></span><div><strong>CanadaBuys / SAP Ariba</strong><span class="cred-desc">ANID AN11298778565. Searchable by procurement officers nationally.</span></div></li>
       <li><span class="cred-dot" aria-hidden="true"></span><div><strong>Novo Industries Inc.</strong><span class="cred-desc">BN 716914023. Serving all of Canada.</span></div></li>
     </ul>
   </div>
@@ -859,20 +934,23 @@ footer{background:#0E2438;padding:36px 0 22px;}
       <details class="faq-item" open><summary><h3>What areas do you serve?</h3><span class="faq-plus" aria-hidden="true"></span></summary><p>Novo Accessibility serves organizations across all of Canada.</p></details>
       <details class="faq-item"><summary><h3>What does a pilot cost?</h3><span class="faq-plus" aria-hidden="true"></span></summary><p>A three-to-five facility pilot is $8,000 plus GST. One fixed fee, quoted in writing before work starts, covering every facility in that range — three, four or five costs the same. It assumes ordinary civic buildings up to about 20,000 square feet and three storeys, with no pool, arena or residential units; anything larger or more complex is quoted separately. Travel outside the local area is quoted with the engagement.</p></details>
       <details class="faq-item"><summary><h3>Can this report be used for a grant application?</h3><span class="faq-plus" aria-hidden="true"></span></summary><p>Yes. The scored findings, phased capital plan, and certification pathway table are built with grant writers in mind. See the Funding section for the two programmes that apply and their current status.</p></details>
-<details class="faq-item"><summary><h3>Does the sample report show everything we would receive?</h3><span class="faq-plus" aria-hidden="true"></span></summary><p>It shows three of the five deliverables in full — the prioritization of findings, the phased capital roadmap and the executive summary — using an illustrative facility. The council briefing deck and the procurement package are produced from that same assessment data and are provided with an engagement rather than published as a sample.</p></details>
+      <details class="faq-item"><summary><h3>Does the sample report show everything we would receive?</h3><span class="faq-plus" aria-hidden="true"></span></summary><p>It shows three of the five deliverables in full — the prioritization of findings, the phased capital roadmap and the executive summary — for one illustrative library, with the roll-up across all five facilities. A pilot gives you that full treatment for every facility, plus the combined portfolio plan. The council briefing deck and the procurement package are produced from the same assessment data and are provided with an engagement rather than published as a sample.</p></details>
       <details class="faq-item"><summary><h3>Why is the sample report about a town that does not exist?</h3><span class="faq-plus" aria-hidden="true"></span></summary><p>Because a client's assessment is theirs. Publishing a real municipality's barriers, scores and costs would be a breach of confidence no matter how useful it might be as marketing. Clearwater is fictional; the methodology, the clause references and the arithmetic behind it are exactly what a real engagement produces.</p></details>
       <details class="faq-item"><summary><h3>How long until we have the report?</h3><span class="faq-plus" aria-hidden="true"></span></summary><p>A pilot runs six to eight weeks end to end. The written report is delivered within seven to ten business days of the final site visit.</p></details>
+      <details class="faq-item"><summary><h3>How are findings measured and located?</h3><span class="faq-plus" aria-hidden="true"></span></summary><p>Every measurable finding is taken on site with a Bosch GLM165-27CGL laser measure, accurate to 1/16 inch, and a force gauge and lux meter where the item calls for them. Each finding is then pinned to a floor plan and shaded by severity, so a reader who has never walked the building can see where the problems are.</p></details>
+      <details class="faq-item"><summary><h3>What happens after the pilot?</h3><span class="faq-plus" aria-hidden="true"></span></summary><p>Most municipalities have more than five facilities, so the usual next step is the rest of the portfolio on the same method. After the first year of work, a reassessment measures progress against the baseline. If you decide to pursue RHF certification, the report shows which prerequisites must be cleared first; certification itself is adjudicated by the Rick Hansen Foundation.</p></details>
     </div>
 
     <div class="a11y">
       <h3>About this website</h3>
       <p>A firm that assesses accessibility should be willing to be assessed. This site is built to WCAG 2.1 Level AA: every text and interface colour meets the contrast ratio, every control is reachable and operable by keyboard with a visible focus indicator, the page is fully navigable on a phone, headings and landmarks are structured for screen readers, and the animation respects the reduced-motion setting in your operating system.</p>
-      <p>If you find something on this site that does not work for you, tell us and we will fix it. That offer is not a formality — it is the same standard we hold a client's building to.</p>
+      <p>If you find something on this site that does not work for you, call 587.355.4677 or email <a href="mailto:info@novoaccessibility.com">info@novoaccessibility.com</a> and we will fix it. That offer is not a formality — it is the same standard we hold a client's building to. The sample report PDF is tagged, with bookmarks and a set reading language. Last checked 15 September 2026 with automated testing (axe-core) at desktop and phone widths.</p>
       <ul>
         <li>WCAG 2.1 Level AA</li>
         <li>Keyboard navigable</li>
         <li>Screen-reader structured</li>
         <li>Reduced-motion aware</li>
+        <li>Tagged sample report PDF</li>
         <li>Sample report is not gated</li>
       </ul>
     </div>
