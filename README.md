@@ -9,14 +9,14 @@ Live at [novoaccessibility.com](https://novoaccessibility.com), served by GitHub
 | File | What it is |
 |---|---|
 | `index.html` | The site. Single file, no build step, no framework. Edit and commit to publish. |
-| `Novo_Accessibility_Sample_Report_Clearwater.pdf` | The sample assessment report the site offers as an ungated download. |
+| `Novo_Accessibility_Sample_Report_Clearwater.pdf` | The sample assessment report (version 2.2, 24 pages, tagged PDF) the site offers as an ungated download. Fictional town, real method: measured findings, severity-mapped floor plans, Next Dollar ranking and a phased capital plan. |
 | `privacy.html`, `terms.html` | Privacy policy and terms of service. |
 | `CNAME`, `.nojekyll`, `robots.txt`, `sitemap.xml` | Domain, Pages and crawler configuration. |
 | Images and icons | Hero image, portrait, favicons, social preview. |
 
 ## The service
 
-An accessibility assessment of municipal facilities, scored against every applicable item of the Rick Hansen Foundation Accessibility Certification (RHFAC) Rating Survey v4.0 (September 2024) and cross-referenced to CSA/ASC B651:23 where a clause of that standard sets a measurable minimum.
+An accessibility assessment of municipal facilities, scored against every applicable item of the Rick Hansen Foundation Accessibility Certification (RHFAC) Rating Survey v4.0 (September 2024) and cross-referenced to CSA/ASC B651:23 where a clause of that standard sets a measurable minimum. Every finding is laser-measured on site and pinned to a severity-shaded floor plan of its building.
 
 A pilot covers three to five facilities over six to eight weeks and produces five deliverables: a prioritization matrix, a phased capital roadmap, a one-page executive summary, a council briefing deck, and a procurement package. The report is delivered within seven to ten business days of the final site visit.
 
