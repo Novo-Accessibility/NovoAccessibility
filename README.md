@@ -8,8 +8,11 @@ Live at [novoaccessibility.com](https://novoaccessibility.com), served by GitHub
 
 | File | What it is |
 |---|---|
-| `index.html` | The site. Single file, no build step, no framework. Edit and commit to publish. |
-| `Novo_Accessibility_Sample_Report_Clearwater.pdf` | The sample assessment report (version 2.2, 24 pages, tagged PDF) the site offers as an ungated download. Fictional town, real method: measured findings, severity-mapped floor plans, Next Dollar ranking and a phased capital plan. |
+| `index.html` | The site. No build step, no framework. Edit and commit to publish. |
+| `site.css` | Shared stylesheet for every page (paper ground, Newsreader, IBM Plex Sans and Mono, one teal accent; WCAG 2.1 AA colour pairs). |
+| `fonts/` | Self-hosted, subsetted web fonts (Newsreader, IBM Plex Sans, IBM Plex Mono), SIL Open Font Licence. No third-party font requests. |
+| `report-cover.webp` | The sample report's cover, shown in the hero. |
+| `Novo_Accessibility_Sample_Report_Clearwater.pdf` | The sample assessment report (version 3.0, 23 pages, tagged PDF) the site offers as an ungated download. Fictional town, real method: measured findings, severity-mapped floor plans, Next Dollar ranking and a phased capital plan. |
 | `privacy.html`, `terms.html` | Privacy policy and terms of service. |
 | `CNAME`, `.nojekyll`, `robots.txt`, `sitemap.xml` | Domain, Pages and crawler configuration. |
 | Images and icons | Hero image, portrait, favicons, social preview. |
@@ -38,7 +41,7 @@ Led by Carl Christie, Director, RHFAC Professional.
 
 ## Editing the site
 
-`index.html` is the whole site. Commit a change to it on `main` and GitHub Pages republishes within a minute or two. The sample report is linked by filename from the download buttons, so replacing the PDF under the same name updates both links at once.
+`index.html` is the homepage and `site.css` styles every page. Commit a change on `main` and GitHub Pages republishes within a minute or two. The sample report is linked by filename from the download buttons, so replacing the PDF under the same name updates both links at once.
 
 ## License
 
