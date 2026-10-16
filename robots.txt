@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /field/
 
 Sitemap: https://novoaccessibility.com/sitemap.xml

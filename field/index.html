@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Novo Field Tool</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Offline RHFAC v4.0 field rating tool with CSA B651:23 measurement checks.">
+<meta name="theme-color" content="#1A3A5C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Novo Field">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+:root{
+  --navy:#1A3A5C; --navy2:#12293F; --teal:#0E7C6B; --teal2:#0A6257; --mint:#3ECBB8;
+  --gold:#B08D57; --gold-deep:#7A5C33; --gold-tint:#F7F0E5;
+  --coral:#D97757; --coral-deep:#B24A2C; --coral-tint:#FBE9E2;
+  --off:#F5F7FA; --card:#FFFFFF; --page:#FFFFFF; --text:#16283A; --muted:#4E6575; --border:#D3DCE5;
+  --ok:#0A6257; --ok-tint:#E4F3F0; --hdr:#1A3A5C;
+  --font:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --navy:#9BC4E8; --teal:#4FD8C0; --teal2:#4FD8C0; --gold:#D8B87E; --gold-deep:#D8B87E; --gold-tint:#2A2317;
+  --coral:#F0A088; --coral-deep:#F0A088; --coral-tint:#33201A; --off:#16222E; --card:#141E28; --page:#0D151D;
+  --text:#E6EDF3; --muted:#A3B4C2; --border:#2A3B4C; --ok:#4FD8C0; --ok-tint:#122A26; --hdr:#0B1A2A;
+}}
+:root[data-theme="dark"]{
+  --navy:#9BC4E8; --teal:#4FD8C0; --teal2:#4FD8C0; --gold:#D8B87E; --gold-deep:#D8B87E; --gold-tint:#2A2317;
+  --coral:#F0A088; --coral-deep:#F0A088; --coral-tint:#33201A; --off:#16222E; --card:#141E28; --page:#0D151D;
+  --text:#E6EDF3; --muted:#A3B4C2; --border:#2A3B4C; --ok:#4FD8C0; --ok-tint:#122A26; --hdr:#0B1A2A;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html{-webkit-text-size-adjust:100%;}
+body{margin:0;background:var(--page);color:var(--text);font-family:var(--font);font-size:15px;line-height:1.5;}
+a{color:var(--teal);}
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px;border-radius:4px;}
+.hide{display:none!important;}
+button{font-family:inherit;}
+
+.banner{position:sticky;top:0;z-index:80;background:var(--coral-deep);color:#fff;padding:10px 14px;font-weight:700;font-size:.85rem;text-align:center;}
+.banner.info{background:var(--teal2);}
+.banner button{margin-left:10px;background:#fff;color:#16283A;border:none;border-radius:6px;padding:5px 10px;font-weight:700;font-size:.8rem;cursor:pointer;}
+
+header{position:sticky;top:0;z-index:50;background:var(--hdr);color:#fff;padding:calc(8px + env(safe-area-inset-top)) 12px 8px;}
+.hrow{display:flex;align-items:center;gap:8px;max-width:1040px;margin:0 auto;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.95rem;white-space:nowrap;}
+.brand svg{width:24px;height:24px;}
+.spacer{flex:1;}
+.hbtn{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:8px;padding:7px 11px;font-weight:600;font-size:.82rem;cursor:pointer;white-space:nowrap;}
+.facpick{max-width:220px;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:6px 9px;font-weight:600;font-size:.82rem;}
+.facpick option{color:#16283A;background:#fff;}
+@media(max-width:600px){.facpick{max-width:none;flex:1 1 100%;order:3;}}
+.progwrap{max-width:1040px;margin:8px auto 0;}
+.progbar{height:6px;border-radius:4px;background:rgba(255,255,255,.22);overflow:hidden;}
+.progfill{height:100%;background:var(--mint);width:0;transition:width .25s;}
+.progtxt{font-size:.72rem;color:rgba(255,255,255,.92);margin-top:4px;display:flex;justify-content:space-between;gap:10px;}
+
+nav.tabs{position:sticky;top:0;z-index:40;background:var(--card);border-bottom:1px solid var(--border);display:flex;gap:2px;overflow-x:auto;padding:0 8px;scrollbar-width:none;}
+nav.tabs::-webkit-scrollbar{display:none;}
+nav.tabs button{background:none;border:none;border-bottom:3px solid transparent;color:var(--muted);font-weight:700;font-size:.84rem;padding:12px 11px;cursor:pointer;white-space:nowrap;}
+nav.tabs button[aria-selected="true"]{color:var(--teal2);border-bottom-color:var(--teal2);}
+
+main{max-width:1040px;margin:0 auto;padding:14px 12px 96px;}
+h2{font-size:1.15rem;margin:0 0 4px;}
+h3{font-size:.95rem;margin:18px 0 6px;}
+.sub{color:var(--muted);font-size:.88rem;margin:0 0 14px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;}
+label.fld{display:block;margin-bottom:10px;}
+label.fld>span{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:4px;}
+input[type=text],input[type=search],input[type=date],input[type=number],input[type=url],select,textarea{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);font:inherit;font-size:16px;}
+textarea{min-height:64px;resize:vertical;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:560px){.grid2{grid-template-columns:1fr;}}
+
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;}
+.filters input,.filters select{width:auto;flex:1;min-width:140px;}
+.catbar{display:flex;align-items:center;gap:10px;background:var(--navy);color:#fff;border-radius:10px;padding:10px 12px;margin:18px 0 8px;font-weight:700;font-size:.9rem;}
+:root[data-theme="dark"] .catbar{color:#0D151D;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .catbar{color:#0D151D;}}
+.catbar .cscore{margin-left:auto;font-size:.8rem;font-weight:600;white-space:nowrap;}
+.subbar{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:14px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+
+.item{border:1px solid var(--border);border-left:4px solid var(--border);border-radius:10px;padding:11px 12px;margin-bottom:8px;background:var(--card);}
+.item.full{border-left-color:var(--ok);}
+.item.mid{border-left-color:var(--gold);}
+.item.zero{border-left-color:var(--coral-deep);background:var(--coral-tint);}
+.item.na{opacity:.6;}
+.itop{display:flex;gap:10px;align-items:flex-start;}
+.inum{font-weight:700;font-size:.78rem;color:var(--muted);min-width:46px;padding-top:2px;}
+.ititle{flex:1;font-size:.93rem;line-height:1.4;}
+.ipts{font-size:.75rem;font-weight:700;color:var(--muted);white-space:nowrap;padding-top:2px;}
+.iref{font-size:.75rem;color:var(--muted);margin-top:4px;padding-left:56px;}
+.iref b{color:var(--gold-deep);}
+.pts{display:flex;gap:5px;margin-top:9px;padding-left:56px;flex-wrap:wrap;align-items:center;}
+@media(max-width:520px){.iref,.pts,.more{padding-left:0!important;}}
+.pbtn{min-width:40px;height:40px;border:1.5px solid var(--border);background:var(--card);color:var(--text);border-radius:8px;font-weight:700;font-size:.9rem;cursor:pointer;}
+.pbtn[aria-pressed="true"]{background:var(--teal2);border-color:var(--teal2);color:#fff;}
+:root[data-theme="dark"] .pbtn[aria-pressed="true"]{color:#0D151D;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pbtn[aria-pressed="true"]{color:#0D151D;}}
+.pbtn.na{min-width:52px;font-size:.78rem;}
+.pbtn.na[aria-pressed="true"]{background:var(--muted);border-color:var(--muted);}
+.pbtn:disabled{opacity:.35;cursor:not-allowed;}
+.tog{margin-left:auto;background:none;border:1.5px solid var(--border);color:var(--teal2);border-radius:8px;padding:8px 11px;font-weight:700;font-size:.8rem;cursor:pointer;}
+.flag{display:inline-block;font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:4px;white-space:nowrap;}
+.flag.fail{background:var(--coral-tint);color:var(--coral-deep);border:1px solid var(--coral);}
+.flag.warn{background:var(--gold-tint);color:var(--gold-deep);border:1px solid var(--gold);}
+.flag.ok{background:var(--ok-tint);color:var(--ok);border:1px solid var(--ok);}
+.more{padding-left:56px;margin-top:10px;}
+.sect{border-top:1px solid var(--border);padding-top:9px;margin-top:9px;}
+.sect>h4{margin:0 0 6px;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
+.chk{display:grid;grid-template-columns:1fr 130px;gap:6px 10px;align-items:center;padding:6px 0;border-bottom:1px dashed var(--border);font-size:.85rem;}
+.chk:last-child{border-bottom:none;}
+.chk .req{font-size:.75rem;color:var(--muted);}
+.chk .res{grid-column:1/-1;font-size:.78rem;font-weight:700;}
+.chk input{padding:7px 9px;font-size:16px;}
+.chk .pair{display:flex;gap:5px;}
+.res.ok{color:var(--ok);} .res.warn{color:var(--gold-deep);} .res.fail{color:var(--coral-deep);}
+.hb{font-size:.84rem;}
+.hb .lab{font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;margin:8px 0 3px;}
+.hb .lab.min{color:var(--gold-deep);} .hb .lab.max{color:var(--teal2);} .hb .lab.mm{color:var(--navy);} .hb .lab.inn{color:var(--muted);}
+.hb ul{margin:0;padding-left:18px;} .hb li{margin:2px 0;} .hb li.l2{margin-left:14px;list-style:circle;} .hb li.note{list-style:none;margin-left:-18px;color:var(--muted);font-style:italic;}
+.hb .na{background:var(--off);border-radius:6px;padding:6px 9px;margin-top:6px;font-size:.8rem;}
+.hb .intro{color:var(--muted);font-size:.8rem;}
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+@media(max-width:520px){.dgrid{grid-template-columns:1fr;}}
+.dgrid .full{grid-column:1/-1;}
+.dgrid input,.dgrid select,.dgrid textarea{font-size:15px;padding:8px 10px;}
+.photos{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.photos .ph{position:relative;}
+.photos img{width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid var(--border);display:block;}
+.photos .ph button{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:none;background:var(--coral-deep);color:#fff;font-size:13px;line-height:1;cursor:pointer;}
+.cbox{display:flex;gap:8px;align-items:center;font-size:.85rem;padding:3px 0;}
+.cbox input{width:19px;height:19px;accent-color:var(--teal);flex:0 0 auto;}
+
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px;margin-bottom:14px;}
+.st{background:var(--off);border-radius:10px;padding:12px;text-align:center;}
+.st .v{font-size:1.45rem;font-weight:700;color:var(--teal2);line-height:1.1;}
+.st .l{font-size:.72rem;color:var(--muted);margin-top:3px;}
+.meter{height:26px;border-radius:6px;background:var(--off);position:relative;overflow:hidden;margin:6px 0 4px;}
+.meter .f{height:100%;background:var(--teal);transition:width .3s;}
+.meter .mk{position:absolute;top:0;bottom:0;width:2px;background:var(--coral-deep);}
+.meter .mk.g{background:var(--gold-deep);}
+.legend{font-size:.74rem;color:var(--muted);display:flex;gap:14px;flex-wrap:wrap;}
+table{width:100%;border-collapse:collapse;font-size:.84rem;}
+th{text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:2px solid var(--navy);padding:0 8px 7px;}
+td{padding:8px;border-bottom:1px solid var(--border);vertical-align:top;}
+.tot td{font-weight:700;background:var(--gold-tint);}
+.pill{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+.pill.ok{background:var(--ok-tint);color:var(--ok);} .pill.no{background:var(--coral-tint);color:var(--coral-deep);} .pill.mid{background:var(--gold-tint);color:var(--gold-deep);}
+.note{background:var(--off);border-left:4px solid var(--gold);border-radius:0 8px 8px 0;padding:12px 14px;margin:12px 0;font-size:.87rem;}
+.note b{color:var(--gold-deep);}
+.warnbox{background:var(--coral-tint);border-left:4px solid var(--coral-deep);border-radius:0 8px 8px 0;padding:12px 14px;margin:12px 0;font-size:.87rem;}
+.row{display:flex;gap:8px;flex-wrap:wrap;}
+.btn{background:var(--teal2);color:#fff;border:none;border-radius:8px;padding:11px 16px;font-weight:700;font-size:.88rem;cursor:pointer;}
+:root[data-theme="dark"] .btn{color:#0D151D;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn{color:#0D151D;}}
+.btn.sec{background:var(--card);color:var(--text);border:1.5px solid var(--border);}
+.btn.danger{background:var(--coral-deep);color:#fff;}
+.faclist{display:flex;flex-direction:column;gap:8px;}
+.facrow{display:flex;gap:8px;align-items:center;border:1px solid var(--border);border-radius:8px;padding:8px 10px;}
+.facrow input{flex:1;border:none;background:transparent;font-weight:600;padding:4px;}
+.facrow .fs{font-size:.8rem;color:var(--muted);white-space:nowrap;}
+.facrow button{background:none;border:none;color:var(--coral-deep);cursor:pointer;font-size:1.1rem;}
+.togrow{border-bottom:1px solid var(--border);padding:8px 0;}
+.togrow .subbox{padding-left:28px;}
+.fab{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:60;background:var(--teal2);color:#fff;border:none;border-radius:26px;padding:13px 20px;font-weight:700;font-size:.85rem;box-shadow:0 6px 20px rgba(0,0,0,.28);cursor:pointer;}
+:root[data-theme="dark"] .fab{color:#0D151D;}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .fab{color:#0D151D;}}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom));background:#12293F;color:#fff;padding:9px 16px;border-radius:20px;font-size:.8rem;z-index:70;opacity:0;pointer-events:none;transition:opacity .25s;}
+.toast.show{opacity:1;}
+.loading{padding:60px 20px;text-align:center;color:var(--muted);}
+
+#report{display:none;}
+@media print{
+  body{font-size:10.5pt;background:#fff;color:#000;}
+  .banner,header,nav.tabs,main,.fab,.toast{display:none!important;}
+  #report{display:block!important;padding:0 6mm;}
+  #report h1{font-size:16pt;margin:0 0 2mm;} #report h2{font-size:12pt;margin:6mm 0 2mm;border-bottom:1px solid #999;}
+  #report table{font-size:9pt;} #report th{border-bottom:1.5px solid #000;color:#000;}
+  #report td{border-bottom:1px solid #ccc;} #report tr{break-inside:avoid;}
+  #report .meta{font-size:9pt;color:#333;}
+}
+</style>
+</head>
+<body>
+<div id="banner" class="banner hide" role="alert"></div>
+<header>
+  <div class="hrow">
+    <span class="brand">
+      <svg viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="100" fill="#101B2D"/><rect x="93" y="280" width="62" height="92" rx="14" fill="#D8C39C"/><rect x="181" y="224" width="62" height="148" rx="14" fill="#B08D57"/><rect x="269" y="168" width="62" height="204" rx="14" fill="#96733F"/><rect x="357" y="112" width="62" height="260" rx="14" fill="#8A6A3D"/></svg>
+      Novo Field Tool
+    </span>
+    <select id="facPick" class="facpick" aria-label="Building being assessed"></select>
+    <span class="spacer"></span>
+    <button class="hbtn" id="jumpBtn" type="button">Next unscored</button>
+    <button class="hbtn" id="themeBtn" type="button" aria-label="Switch light or dark theme">◐</button>
+  </div>
+  <div class="progwrap">
+    <div class="progbar"><div class="progfill" id="prog"></div></div>
+    <div class="progtxt"><span id="progL">Loading…</span><button id="progR" type="button" style="background:none;border:none;color:inherit;font:inherit;padding:0;cursor:pointer;text-decoration:underline dotted"></button></div>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Sections">
+  <button role="tab" aria-selected="true" data-t="setup">Setup</button>
+  <button role="tab" aria-selected="false" data-t="prereq">Prerequisites</button>
+  <button role="tab" aria-selected="false" data-t="survey">Survey</button>
+  <button role="tab" aria-selected="false" data-t="score">Score</button>
+  <button role="tab" aria-selected="false" data-t="remed">Remediation</button>
+  <button role="tab" aria-selected="false" data-t="port">All buildings</button>
+  <button role="tab" aria-selected="false" data-t="data">Data</button>
+</nav>
+
+<main>
+<div id="loading" class="loading">Loading survey data…</div>
+<section id="gate" class="hide" aria-labelledby="gateH">
+  <div class="card" style="max-width:440px;margin:40px auto">
+    <h2 id="gateH">Unlock the field tool</h2>
+    <p class="sub">The survey, Handbook criteria and CSA requirements are encrypted. Enter the passcode once on this device; after that the tool works offline.</p>
+    <form id="gateForm">
+      <label class="fld"><span>Passcode</span><input type="text" id="gatePass" autocomplete="off" autocapitalize="none" spellcheck="false" required></label>
+      <button class="btn" type="submit">Unlock</button>
+      <p class="sub" id="gateMsg" role="status" style="margin-top:10px"></p>
+    </form>
+  </div>
+</section>
+
+<section id="p-setup" class="hide">
+  <h2>Buildings &amp; setup</h2>
+  <p class="sub">Add one building per site in the pilot. The picker at the top switches between them.</p>
+  <div class="card"><h3 style="margin-top:0">Buildings in this assessment</h3><div class="faclist" id="facList"></div>
+    <div class="row" style="margin-top:10px"><button class="btn sec" id="addFac" type="button">+ Add a building</button></div></div>
+  <div class="card">
+    <div class="grid2">
+      <label class="fld"><span>Facility name</span><input type="text" id="f_name"></label>
+      <label class="fld"><span>Owner / municipality</span><input type="text" id="f_owner"></label>
+      <label class="fld"><span>Address</span><input type="text" id="f_addr"></label>
+      <label class="fld"><span>Facility type</span><input type="text" id="f_type" placeholder="Public library"></label>
+      <label class="fld"><span>Typical users</span><input type="text" id="f_users" placeholder="All ages; large senior population"></label>
+      <label class="fld"><span>Levels / floor area</span><input type="text" id="f_area" placeholder="2 storeys, 7,000 sq ft"></label>
+      <label class="fld"><span>Year built / renovated</span><input type="text" id="f_built"></label>
+      <label class="fld"><span>Assessment date</span><input type="date" id="f_date"></label>
+      <label class="fld"><span>Assessor (all buildings)</span><input type="text" id="f_assessor"></label>
+      <label class="fld"><span>Equipment (all buildings)</span><input type="text" id="f_equip" placeholder="Laser measure, force gauge, lux meter, LRV meter"></label>
+    </div>
+    <label class="fld"><span>Scope of rating (Handbook 2.2)</span><textarea id="f_scope" placeholder="What is included and excluded: parking lots, transit stops, entrances, floors, spaces closed at the time of rating."></textarea></label>
+  </div>
+  <h3>Applicability</h3>
+  <p class="sub">Turn off sections that don't exist at this site. Excluded sections leave the maximum. Use N/A on individual features for the rest.</p>
+  <div class="row" style="margin-bottom:10px">
+    <button class="btn sec" id="subsOff" type="button">Turn all Category 8 sections off</button>
+    <button class="btn sec" id="subsOn" type="button">Turn everything on</button>
+  </div>
+  <div class="card" id="catToggles"></div>
+</section>
+
+<section id="p-prereq" class="hide">
+  <h2>Certification prerequisites</h2>
+  <p class="sub">No score confers certification on its own. A site must clear these too (Handbook 2.3).</p>
+  <div id="preWarn"></div>
+  <h3>Certification prerequisites</h3><div class="card" id="preCert"></div>
+  <h3>Gold Certification prerequisites</h3><div class="card" id="preGold"></div>
+</section>
+
+<section id="p-survey" class="hide">
+  <h2>Rating survey</h2>
+  <p class="sub" id="surveySub"></p>
+  <div class="filters">
+    <input type="search" id="q" placeholder="Search items or clause…" aria-label="Search">
+    <select id="fCat" aria-label="Category"><option value="">All categories</option></select>
+    <select id="fStatus" aria-label="Status">
+      <option value="">All features</option><option value="unscored">Unscored</option><option value="short">Below maximum</option>
+      <option value="checks">Has B651 checks</option><option value="conflict">Full points but a check fails</option>
+    </select>
+  </div>
+  <div id="items"></div>
+</section>
+
+<section id="p-score" class="hide">
+  <h2>Score</h2>
+  <p class="sub">Rating score = points earned (Categories 1–10 plus bonus) ÷ applicable points in Categories 1–10.</p>
+  <div class="stat" id="stats"></div>
+  <div class="card"><div class="meter" id="meter"><div class="f"></div><div class="mk" style="left:60%"></div><div class="mk g" style="left:80%"></div></div>
+    <div class="legend"><span>■ Current score (capped at 100% on the bar)</span><span>│ 60% Certified</span><span>│ 80% Gold</span></div></div>
+  <div id="conflicts"></div>
+  <div class="card"><h3 style="margin-top:0">By category</h3><div style="overflow-x:auto"><table id="catTable"></table></div></div>
+</section>
+
+<section id="p-remed" class="hide">
+  <h2>Remediation</h2>
+  <p class="sub">Every feature scored below its maximum. Life-safety first, then points recovered per dollar at the midpoint of the cost range.</p>
+  <div class="stat" id="remStats"></div>
+  <div class="card"><div style="overflow-x:auto"><table id="remTable"></table></div></div>
+</section>
+
+<section id="p-port" class="hide">
+  <h2>All buildings</h2>
+  <div class="card"><h3 style="margin-top:0">Scorecard</h3><div style="overflow-x:auto"><table id="portTable"></table></div></div>
+  <div class="card"><h3 style="margin-top:0">The same shortfall at more than one building</h3>
+    <p class="sub">One contract instead of several. The bundled price assumes 20% savings — adjust once you have quotes.</p>
+    <div style="overflow-x:auto"><table id="sysTable"></table></div></div>
+</section>
+
+<section id="p-data" class="hide">
+  <h2>Data</h2>
+  <p class="sub">Everything stays on this device. Nothing is uploaded.</p>
+  <div class="card"><h3 style="margin-top:0">Storage</h3><p class="sub" id="storeInfo">Checking…</p><p class="sub" id="backupInfo"></p></div>
+  <div class="card"><h3 style="margin-top:0">Back up &amp; export</h3>
+    <div class="row">
+      <button class="btn" id="bkFull" type="button">Backup with photos</button>
+      <button class="btn sec" id="bkData" type="button">Backup, data only</button>
+      <button class="btn sec" id="expCsv" type="button">Findings CSV</button>
+      <button class="btn sec" id="expJson" type="button">Report data JSON</button>
+      <button class="btn sec" id="doPrint" type="button">Print / PDF report</button>
+    </div></div>
+  <div class="card"><h3 style="margin-top:0">Restore</h3><p class="sub">Replaces everything currently in the tool.</p>
+    <input type="file" id="impFile" accept="application/json,.json"></div>
+  <div class="card"><h3 style="margin-top:0">Start over</h3><p class="sub">Clears every building and photo on this device. Back up first.</p>
+    <button class="btn danger" id="clearAll" type="button">Clear all data</button></div>
+  <div class="card"><h3 style="margin-top:0">Lock this device</h3><p class="sub">Removes the unlocked survey and standards data. Ratings and photos stay. The passcode is needed to open the tool again.</p>
+    <button class="btn sec" id="lockBtn" type="button">Lock this device</button></div>
+  <div class="card"><h3 style="margin-top:0">Sources</h3><div class="sub" id="srcMeta"></div></div>
+</section>
+</main>
+
+<div id="report"></div>
+<div class="toast" id="toast" role="status"></div>
+<script src="app.js"></script>
+</body>
+</html>
