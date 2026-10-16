@@ -1,5 +1,5 @@
 /* Novo Field Tool service worker — caches the app so it runs with no signal. */
-var CACHE = 'novo-field-v3.0.1';
+var CACHE = 'novo-field-v3.0.2';
 var FILES = ['./', 'index.html', 'app.js', 'manifest.webmanifest', 'data/survey.enc', 'data/standards.enc',
              'icons/icon-192.png', 'icons/icon-512.png', 'icons/apple-touch-icon.png'];
 self.addEventListener('install', function (e) {

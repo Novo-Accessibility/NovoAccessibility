@@ -3,7 +3,7 @@
 (function () {
 'use strict';
 
-var VERSION = '3.0.1';
+var VERSION = '3.0.2';
 var SV, ST;                 // survey + standards data
 var S;                      // app state
 var DB;                     // IndexedDB handle
@@ -524,6 +524,7 @@ function detailEl(it) {
   // ---- handbook criteria
   if (it.hb && Object.keys(it.hb).length) w.appendChild(hbEl(it.hb));
   if (it.pnote) w.appendChild(el('div', 'note', '<b>Point value.</b> ' + esc(it.pnote)));
+  if (it.tnote) w.appendChild(el('div', 'note', '<b>Wording.</b> ' + esc(it.tnote)));
   // ---- notes, cost, location, photos
   var ns = el('div', 'sect'); ns.appendChild(el('h4', '', 'Findings'));
   var g = el('div', 'dgrid');
