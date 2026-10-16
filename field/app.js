@@ -3,7 +3,7 @@
 (function () {
 'use strict';
 
-var VERSION = '3.0.0';
+var VERSION = '3.0.1';
 var SV, ST;                 // survey + standards data
 var S;                      // app state
 var DB;                     // IndexedDB handle
