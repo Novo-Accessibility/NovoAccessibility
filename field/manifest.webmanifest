@@ -1,6 +1,6 @@
 {
-  "name": "Novo Field Tool",
-  "short_name": "Novo Field",
+  "name": "Field Rating Tool",
+  "short_name": "Field Tool",
   "description": "Offline RHFAC v4.0 field rating with CSA B651:23 and B652:23 measurement checks.",
   "start_url": "./",
   "scope": "./",

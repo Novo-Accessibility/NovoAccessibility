@@ -1,9 +1,9 @@
-/* Novo Field Tool — RHFAC v4.0 rating with CSA B651:23 / B652:23 measurement checks.
+/* Field Rating Tool — RHFAC v4.0 rating with CSA B651:23 / B652:23 measurement checks.
    Offline-first: all data lives in IndexedDB on this device. */
 (function () {
 'use strict';
 
-var VERSION = '3.0.2';
+var VERSION = '3.0.3';
 var SV, ST;                 // survey + standards data
 var S;                      // app state
 var DB;                     // IndexedDB handle
@@ -12,9 +12,9 @@ var open = {};              // item number -> expanded
 var LIMIT = 80, shown = LIMIT;
 
 /* ================= storage (IndexedDB) ================= */
-function idb() {
+function openDB(name) {
   return new Promise(function (res, rej) {
-    var r = indexedDB.open('novo-field', 1);
+    var r = indexedDB.open(name, 1);
     r.onupgradeneeded = function () {
       var d = r.result;
       if (!d.objectStoreNames.contains('kv')) d.createObjectStore('kv');
@@ -24,6 +24,7 @@ function idb() {
     r.onerror = function () { rej(r.error); };
   });
 }
+function idb() { return openDB('field-tool'); }
 function tx(store, mode, fn) {
   return new Promise(function (res, rej) {
     var t = DB.transaction(store, mode), s = t.objectStore(store), out;
@@ -717,8 +718,8 @@ function backup(withPhotos) {
   }) : Promise.resolve([]);
   return p.then(function (photos) {
     S.lastBackup = Date.now(); S.firstUnbacked = 0;
-    var out = { app: 'novo-field', version: VERSION, saved: new Date().toISOString(), state: S, photos: photos };
-    dl('novo-field-backup-' + (withPhotos ? 'full-' : 'data-') + stamp() + '.json', JSON.stringify(out));
+    var out = { app: 'field-tool', version: VERSION, saved: new Date().toISOString(), state: S, photos: photos };
+    dl('field-tool-backup-' + (withPhotos ? 'full-' : 'data-') + stamp() + '.json', JSON.stringify(out));
     save(); S.firstUnbacked = 0; backupInfo(); banner(''); toast('Backup downloaded');
   });
 }
@@ -726,12 +727,12 @@ function restore(file) {
   var r = new FileReader();
   r.onload = function () {
     var o; try { o = JSON.parse(r.result); } catch (e) { toast('That file is not a backup'); return; }
-    var st = o && o.app === 'novo-field' ? o.state : o;   // also accepts the old single-file tool's JSON
+    var st = o && o.state && o.state.facs ? o.state : o;   // also accepts the old single-file tool's JSON
     if (!st || !(st.facs || st.items)) { toast('That file is not a backup'); return; }
     if (!confirm('Replace everything in the tool with this backup?')) return;
     var photos = (o.photos || []).slice();
     // old single-file backups kept photos inline as data URLs
-    if (st.facs && !o.app) st.facs.forEach(function (f) {
+    if (st.facs && !o.state) st.facs.forEach(function (f) {
       Object.keys(f.items || {}).forEach(function (n) {
         (f.items[n].photos || []).forEach(function (d, i) { if (typeof d === 'string' && d.indexOf('data:') === 0) photos.push({ id: uid('p'), fac: f.id, item: n, ts: Date.now(), data: d, legacy: true }); });
       });
@@ -775,10 +776,10 @@ function exportCsv() {
         x.measurements.some(function (m) { return m.result === 'fail'; }) ? 'Yes' : '', x.note.replace(/\n/g, ' '), x.floor, x.room, x.costLow || '', x.costHigh || '', x.lifeSafety ? 'Yes' : '', x.prerequisite ? 'Yes' : '', x.phase, x.sameWorkAs]);
     });
   });
-  dl('novo-findings-' + stamp() + '.csv', '﻿' + rows.map(function (r) { return r.map(function (c) { return '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"'; }).join(','); }).join('\r\n'), 'text/csv');
+  dl('field-findings-' + stamp() + '.csv', '﻿' + rows.map(function (r) { return r.map(function (c) { return '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"'; }).join(','); }).join('\r\n'), 'text/csv');
 }
 function exportJson() {
-  var out = { generated: new Date().toISOString(), tool: 'Novo Field Tool ' + VERSION, sources: { survey: SV.meta.title + ' ' + SV.meta.version, handbook: SV.meta.handbook, standards: [ST.meta.title, ST.meta.b652] },
+  var out = { generated: new Date().toISOString(), tool: 'Field Rating Tool ' + VERSION, sources: { survey: SV.meta.title + ' ' + SV.meta.version, handbook: SV.meta.handbook, standards: [ST.meta.title, ST.meta.b652] },
     assessor: S.shared, buildings: S.facs.map(function (f) {
       var t = totals(f), p = preOut(f);
       return { facility: f.facility, score: { pointsCat1to10: t.base, bonus: t.bonus, earned: t.earned, applicable: t.max, percent: +(t.pct.toFixed(1)), certifiedAt: t.cert, goldAt: t.gold, status: level(f, t) },
@@ -786,7 +787,7 @@ function exportJson() {
         byCategory: Object.keys(t.byCat).map(function (c) { return { category: c, name: SV.cats[c], earned: t.byCat[c].e, max: t.byCat[c].m }; }),
         findings: findings(f) };
     }) };
-  dl('novo-report-data-' + stamp() + '.json', JSON.stringify(out, null, 1));
+  dl('field-report-data-' + stamp() + '.json', JSON.stringify(out, null, 1));
 }
 function printReport() {
   var f = cur(), t = totals(f), p = preOut(f), fa = f.facility;
@@ -867,7 +868,7 @@ function wire() {
   $('themeBtn').onclick = function () {
     var c = document.documentElement.getAttribute('data-theme'), n = c === 'dark' ? 'light' : (c === 'light' ? null : 'dark');
     if (n) document.documentElement.setAttribute('data-theme', n); else document.documentElement.removeAttribute('data-theme');
-    try { localStorage.setItem('novo-theme', n || ''); } catch (e) {}
+    try { localStorage.setItem('field-theme', n || ''); } catch (e) {}
   };
   $('bkFull').onclick = function () { backup(true); };
   $('lockBtn').onclick = lockDevice;
@@ -884,11 +885,11 @@ function wire() {
   $('srcMeta').innerHTML = '<p>' + esc(SV.meta.title + ' ' + SV.meta.version) + ' — feature list and point values.</p><p>' + esc(SV.meta.handbook) +
     ' — Minimum/Maximum criteria, N/A rules and scoring method. Where the survey and Handbook disagree on points (8.12.2, 8.13.3), the Handbook value is used because it matches both documents\' section totals.</p><p>' +
     esc(ST.meta.title + ', ' + ST.meta.name) + ' and ' + esc(ST.meta.b652) + ' — clause numbers and numeric requirements only.</p><p>' + esc(SV.meta.scoring) + '</p>' +
-    '<p>Rick Hansen Foundation and CSA Group content is copyright of its owners. This tool is a field aid and does not certify sites.</p><p style="color:var(--muted)">Novo Field Tool ' + VERSION + '</p>';
+    '<p>Rick Hansen Foundation and CSA Group content is copyright of its owners. This tool is a field aid and does not certify sites.</p><p style="color:var(--muted)">Field Rating Tool ' + VERSION + '</p>';
 }
 
 /* ================= boot ================= */
-try { var th = localStorage.getItem('novo-theme'); if (th) document.documentElement.setAttribute('data-theme', th); } catch (e) {}
+try { var th = localStorage.getItem('field-theme'); if (th) document.documentElement.setAttribute('data-theme', th); } catch (e) {}
 function unb64(s) { var b = atob(s), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
 function deriveKey(pass, env) {
   return crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']).then(function (base) {
