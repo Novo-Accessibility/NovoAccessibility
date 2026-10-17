@@ -129,6 +129,11 @@ textarea{min-height:64px;resize:vertical;}
 @media(max-width:520px){.dgrid{grid-template-columns:1fr;}}
 .dgrid .full{grid-column:1/-1;}
 .dgrid input,.dgrid select,.dgrid textarea{font-size:15px;padding:8px 10px;}
+.camrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:4px;}
+.camreq{flex-basis:100%;margin:0;font-size:.82rem;font-weight:700;color:var(--coral-deep);}
+.btn.camera{display:inline-flex;align-items:center;gap:6px;cursor:pointer;min-height:44px;}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+.btn.camera:focus-within{outline:3px solid var(--teal);outline-offset:2px;}
 .photos{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
 .photos .ph{position:relative;}
 .photos img{width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid var(--border);display:block;}
@@ -247,6 +252,8 @@ td{padding:8px;border-bottom:1px solid var(--border);vertical-align:top;}
       <label class="fld"><span>Assessor (all buildings)</span><input type="text" id="f_assessor"></label>
       <label class="fld"><span>Equipment (all buildings)</span><input type="text" id="f_equip" placeholder="Laser measure, force gauge, lux meter, LRV meter"></label>
     </div>
+    <label class="fld"><span>Photo evidence (all buildings)</span>
+      <select id="f_photoRule"><option value="half">Require a photo when a score is half its maximum or less</option><option value="below">Require a photo for any score below the maximum</option><option value="zero">Require a photo only when a score is zero</option><option value="off">Don't require photos</option></select></label>
     <label class="fld"><span>Scope of rating (Handbook 2.2)</span><textarea id="f_scope" placeholder="What is included and excluded: parking lots, transit stops, entrances, floors, spaces closed at the time of rating."></textarea></label>
   </div>
   <h3>Applicability</h3>

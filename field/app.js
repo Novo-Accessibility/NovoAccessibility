@@ -3,7 +3,7 @@
 (function () {
 'use strict';
 
-var VERSION = '3.2.0';
+var VERSION = '3.3.0';
 var SV, ST;                 // survey + standards data
 var S;                      // app state
 var DB;                     // IndexedDB handle
@@ -213,6 +213,20 @@ function itemCheckState(f, n) {
   });
   return { worst: worst, n: cnt };
 }
+var PHOTO_RULES = { below: 'below its maximum', half: 'half its maximum or less', zero: 'zero', off: '' };
+function photoRule() { return (S.shared && S.shared.photoRule) || 'half'; }
+function lowScore(it, pts) {
+  var r = photoRule();
+  if (r === 'off' || pts == null) return false;
+  if (r === 'zero') return pts === 0;
+  if (r === 'below') return pts < it.p;
+  return pts <= it.p / 2;
+}
+function photoNeeded(f, it) {
+  if (it.kind) return false;
+  var st = ist(f, it.n);
+  return !st.na && lowScore(it, st.pts) && !((st.photos || []).length);
+}
 function regIssues(f, it) {
   // What the RHFAC Registry would refuse on submit (Registry User Guide for Professionals, pp. 5-8)
   var st = ist(f, it.n), out = [];
@@ -220,6 +234,7 @@ function regIssues(f, it) {
   if (st.na) { if (!(st.naWhy || '').trim()) out.push('N/A needs an explanation'); return out; }
   if (!scored(f, it)) return out;
   if (!(st.note || '').trim()) out.push('Feature description missing');
+  if (photoNeeded(f, it)) out.push('Photo required for this score');
   if (it.sub === '12.2' && earned(f, it) > 0 && !(st.url || '').trim()) out.push('Website URL missing');
   return out;
 }
@@ -262,6 +277,8 @@ function renderProgress() {
 /* ================= setup ================= */
 var SHARED = { assessor: 1, equip: 1 };
 function renderSetup() {
+  var pr = $('f_photoRule');
+  if (pr) { pr.value = photoRule(); pr.onchange = function () { S.shared.photoRule = pr.value; save(); shown = LIMIT; renderItems(); renderScore(); toast('Photo rule updated'); }; }
   ['name', 'owner', 'addr', 'type', 'users', 'area', 'built', 'date', 'assessor', 'equip', 'scope'].forEach(function (k) {
     var e = $('f_' + k); if (!e) return;
     e.value = SHARED[k] ? (S.shared[k] || '') : (cur().facility[k] || '');
@@ -402,11 +419,12 @@ function itemEl(it) {
   d.id = 'it_' + it.n.replace(/\./g, '_');
   var cs = itemCheckState(f, it.n);
   var flag = '';
-  if (conflict(f, it)) flag = '<span class="flag fail">Full points, but a measurement fails</span>';
-  else if (cs.worst === 'fail') flag = '<span class="flag fail">Below B651/B652</span>';
-  else if (cs.worst === 'warn') flag = '<span class="flag warn">Check profile</span>';
-  else if (cs.worst === 'ok') flag = '<span class="flag ok">Measurements meet</span>';
+  if (conflict(f, it)) flag = '<span class="flag fail mflag">Full points, but a measurement fails</span>';
+  else if (cs.worst === 'fail') flag = '<span class="flag fail mflag">Below B651/B652</span>';
+  else if (cs.worst === 'warn') flag = '<span class="flag warn mflag">Check profile</span>';
+  else if (cs.worst === 'ok') flag = '<span class="flag ok mflag">Measurements meet</span>';
   if (st.na && !(st.naWhy || '').trim()) flag += ' <span class="flag warn">N/A needs explanation</span>';
+  if (photoNeeded(f, it)) flag += ' <span class="flag warn">Photo required</span>';
   var pnote = it.pnote ? ' <span class="flag warn" title="' + esc(it.pnote) + '">Points per Handbook</span>' : '';
   d.innerHTML = '<div class="itop"><span class="inum">' + esc(it.n) + '</span><span class="ititle">' + esc(it.t) + pnote + ' ' + flag + '</span>' +
     '<span class="ipts">' + (it.kind ? '' : earnedLabel(f, it)) + it.p + ' pt' + (it.p === 1 ? '' : 's') + '</span></div>' + refLine(it);
@@ -435,7 +453,7 @@ function pbtn(it, val, lab, on) {
   b.onclick = function () {
     var f = cur(), s = f.items[it.n] = f.items[it.n] || {};
     if (val === 'na') { s.na = !s.na; if (s.na) { s.pts = null; open[it.n] = true; } }
-    else { s.na = false; s.pts = (s.pts === val) ? null : val; }
+    else { s.na = false; s.pts = (s.pts === val) ? null : val; if (photoNeeded(f, it)) open[it.n] = true; }
     save(); refreshItem(it); renderProgress();
     if (val === 'na' && s.na) setTimeout(function () { var x = document.querySelector('#it_' + it.n.replace(/\./g, '_') + ' [data-f="naWhy"]'); if (x) x.focus(); }, 30);
   };
@@ -459,6 +477,17 @@ function refreshItem(it) {
 }
 function detailEl(it) {
   var f = cur(), st = f.items[it.n] = f.items[it.n] || {}, w = el('div', 'more');
+  // ---- photos first: on site, the camera is the first thing reached for
+  var ps = el('div', 'sect');
+  ps.appendChild(el('h4', '', 'Photos'));
+  ps.insertAdjacentHTML('beforeend', '<div class="camrow">' + (photoNeeded(f, it) ? '<p class="camreq">This score needs at least one photo as evidence.</p>' : '') +
+    '<label class="btn camera"><input type="file" accept="image/*" capture="environment" multiple class="vh"> Take photo</label>' +
+    '<label class="btn sec camera"><input type="file" accept="image/*" multiple class="vh"> Choose from library</label></div>' +
+    '<div class="photos"></div><div class="phcount" style="font-size:.78rem;color:var(--muted);margin-top:4px"></div>');
+  ps.querySelectorAll('input[type=file]').forEach(function (inp) {
+    inp.onchange = function (e) { addPhotos(it, [].slice.call(e.target.files), function () { refreshItem(it); renderProgress(); }); inp.value = ''; };
+  });
+  w.appendChild(ps);
   // ---- measurement checks
   var chks = checksFor(it.n);
   if (chks.length) {
@@ -495,13 +524,13 @@ function detailEl(it) {
   }
   function updFlag() {
     var head = w.parentNode && w.parentNode.querySelector('.ititle'); if (!head) return;
-    var old = head.querySelector('.flag:not([title])'); if (old) old.remove();
+    var old = head.querySelector('.mflag'); if (old) old.remove();
     var cs = itemCheckState(f, it.n), fl = null;
     if (conflict(f, it)) fl = ['fail', 'Full points, but a measurement fails'];
     else if (cs.worst === 'fail') fl = ['fail', 'Below B651/B652'];
     else if (cs.worst === 'warn') fl = ['warn', 'Check profile'];
     else if (cs.worst === 'ok') fl = ['ok', 'Measurements meet'];
-    if (fl) head.appendChild(el('span', 'flag ' + fl[0], fl[1]));
+    if (fl) head.appendChild(el('span', 'flag mflag ' + fl[0], fl[1]));
   }
   // ---- special: technology use checklist
   if (it.kind === 'tech') {
@@ -563,7 +592,7 @@ function detailEl(it) {
     };
   });
   ns.appendChild(reg); w.appendChild(ns);
-  ns = el('div', 'sect'); ns.appendChild(el('h4', '', 'Location, cost and photos'));
+  ns = el('div', 'sect'); ns.appendChild(el('h4', '', 'Location and cost'));
   var g = el('div', 'dgrid');
   g.innerHTML =
     (it.n === '12.2.1' || it.sub === '12.2' ? '<input class="full" type="url" data-f="url" placeholder="Website URL (required for 12.2 bonus points)" value="' + esc(st.url || '') + '">' : '') +
@@ -575,24 +604,22 @@ function detailEl(it) {
     '<input type="text" data-f="with" placeholder="Same work as item #" value="' + esc(st.with || '') + '">' +
     '<label class="cbox full"><input type="checkbox" data-f="life"' + (st.life ? ' checked' : '') + '> Life-safety item</label>' +
     '<label class="cbox full"><input type="checkbox" data-f="prereq"' + (st.prereq ? ' checked' : '') + '> Affects a certification prerequisite</label>' +
-    '<label class="full" style="font-size:.82rem;color:var(--muted)">Photos <input type="file" accept="image/*" capture="environment" multiple data-f="photo" style="font-size:14px"></label>' +
-    '<div class="photos full"></div><div class="full phcount" style="font-size:.78rem;color:var(--muted)"></div>';
+''; 
   g.querySelectorAll('[data-f]').forEach(function (inp) {
     var k = inp.dataset.f;
-    if (k === 'photo') { inp.onchange = function (e) { addPhotos(it, [].slice.call(e.target.files), function () { drawPhotos(); }); inp.value = ''; }; return; }
     inp.oninput = inp.onchange = function () { st[k] = inp.type === 'checkbox' ? inp.checked : inp.value; save(); };
   });
   ns.appendChild(g); w.appendChild(ns);
   function drawPhotos() {
-    var box = g.querySelector('.photos'); box.innerHTML = '';
-    var n = elemPhotos(f, it.sub), pc2 = g.querySelector('.phcount');
+    var box = ps.querySelector('.photos'); box.innerHTML = '';
+    var n = elemPhotos(f, it.sub), pc2 = ps.querySelector('.phcount');
     pc2.innerHTML = 'Photos for element ' + esc(it.sub) + ': <b>' + n + ' of ' + PHOTO_LIMIT + '</b> (the Registry attaches photos per element, up to ' + PHOTO_LIMIT + ').' +
       (n > PHOTO_LIMIT ? ' <span style="color:var(--coral-deep);font-weight:700">Over the Registry limit — remove ' + (n - PHOTO_LIMIT) + '.</span>' : '');
     (st.photos || []).forEach(function (id, i) {
       var ph = el('span', 'ph'), img = el('img'); img.alt = 'Photo ' + (i + 1) + ' for ' + it.n;
       thumb(id).then(function (u) { if (u) img.src = u; });
       var rm = el('button', '', '×'); rm.type = 'button'; rm.setAttribute('aria-label', 'Remove photo');
-      rm.onclick = function () { st.photos.splice(i, 1); photoDel(id); if (photoURL[id]) { URL.revokeObjectURL(photoURL[id]); delete photoURL[id]; } save(); drawPhotos(); };
+      rm.onclick = function () { st.photos.splice(i, 1); photoDel(id); if (photoURL[id]) { URL.revokeObjectURL(photoURL[id]); delete photoURL[id]; } save(); refreshItem(it); };
       ph.appendChild(img); ph.appendChild(rm); box.appendChild(ph);
     });
   }
@@ -677,15 +704,15 @@ function renderScore() {
   renderReady();
 }
 function readiness(f) {
-  var miss = { desc: [], na: [], url: [] }, over = [], unscored = 0, subs = {};
+  var miss = { desc: [], na: [], url: [], photo: [] }, over = [], unscored = 0, subs = {};
   SV.items.forEach(function (it) {
     if (!live(f, it)) return;
     if (!scored(f, it)) unscored++;
-    regIssues(f, it).forEach(function (m) { (m.indexOf('N/A') === 0 ? miss.na : m.indexOf('URL') >= 0 ? miss.url : miss.desc).push(it.n); });
+    regIssues(f, it).forEach(function (m) { (m.indexOf('N/A') === 0 ? miss.na : m.indexOf('URL') >= 0 ? miss.url : m.indexOf('Photo') === 0 ? miss.photo : miss.desc).push(it.n); });
     subs[it.sub] = 1;
   });
   Object.keys(subs).forEach(function (s) { var n = elemPhotos(f, s); if (n > PHOTO_LIMIT) over.push(s + ' (' + n + ')'); });
-  return { miss: miss, over: over, unscored: unscored, total: miss.desc.length + miss.na.length + miss.url.length + over.length };
+  return { miss: miss, over: over, unscored: unscored, total: miss.desc.length + miss.na.length + miss.url.length + miss.photo.length + over.length };
 }
 function renderReady() {
   var host = $('ready'); if (!host) return;
@@ -695,11 +722,12 @@ function renderReady() {
   if (r.unscored) rows.push('<li>' + r.unscored + ' applicable feature' + (r.unscored === 1 ? '' : 's') + ' not yet scored or marked N/A</li>');
   if (r.miss.desc.length) rows.push('<li>' + r.miss.desc.length + ' scored without a feature description: ' + links(r.miss.desc) + '</li>');
   if (r.miss.na.length) rows.push('<li>' + r.miss.na.length + ' N/A without an explanation: ' + links(r.miss.na) + '</li>');
+  if (r.miss.photo.length) rows.push('<li>' + r.miss.photo.length + ' low score' + (r.miss.photo.length === 1 ? '' : 's') + ' without a photo: ' + links(r.miss.photo) + '</li>');
   if (r.miss.url.length) rows.push('<li>' + r.miss.url.length + ' website item' + (r.miss.url.length === 1 ? '' : 's') + ' without the URL: ' + links(r.miss.url) + '</li>');
   if (r.over.length) rows.push('<li>Elements over ' + PHOTO_LIMIT + ' photos: ' + esc(r.over.join(', ')) + '</li>');
   host.innerHTML = '<h3 style="margin-top:0">Ready for the Registry?</h3>' + (rows.length ?
     '<p class="sub">The Registry refuses a submission until these are fixed.</p><ul style="margin:0;padding-left:20px;font-size:.88rem">' + rows.join('') + '</ul>' :
-    '<p class="sub" style="margin:0"><b style="color:var(--ok)">Ready.</b> Every scored feature has a description, every N/A has an explanation and no element is over the photo limit.</p>');
+    '<p class="sub" style="margin:0"><b style="color:var(--ok)">Ready.</b> Every scored feature has a description, every low score has a photo, every N/A has an explanation and no element is over the photo limit.</p>');
   host.querySelectorAll('a').forEach(function (x) { x.onclick = function (e) { e.preventDefault(); jumpTo(x.dataset.n); }; });
 }
 
