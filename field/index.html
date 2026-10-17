@@ -274,7 +274,7 @@ td{padding:8px;border-bottom:1px solid var(--border);vertical-align:top;}
     <select id="fCat" aria-label="Category"><option value="">All categories</option></select>
     <select id="fStatus" aria-label="Status">
       <option value="">All features</option><option value="unscored">Unscored</option><option value="short">Below maximum</option>
-      <option value="checks">Has B651 checks</option><option value="conflict">Full points but a check fails</option>
+      <option value="registry">Missing Registry fields</option><option value="checks">Has B651 checks</option><option value="conflict">Full points but a check fails</option>
     </select>
   </div>
   <div id="items"></div>
@@ -287,6 +287,7 @@ td{padding:8px;border-bottom:1px solid var(--border);vertical-align:top;}
   <div class="card"><div class="meter" id="meter"><div class="f"></div><div class="mk" style="left:60%"></div><div class="mk g" style="left:80%"></div></div>
     <div class="legend"><span>■ Current score (capped at 100% on the bar)</span><span>│ 60% Certified</span><span>│ 80% Gold</span></div></div>
   <div id="conflicts"></div>
+  <div class="card" id="ready"></div>
   <div class="card"><h3 style="margin-top:0">By category</h3><div style="overflow-x:auto"><table id="catTable"></table></div></div>
 </section>
 
@@ -309,6 +310,9 @@ td{padding:8px;border-bottom:1px solid var(--border);vertical-align:top;}
   <h2>Data</h2>
   <p class="sub">Everything stays on this device. Nothing is uploaded.</p>
   <div class="card"><h3 style="margin-top:0">Storage</h3><p class="sub" id="storeInfo">Checking…</p><p class="sub" id="backupInfo"></p></div>
+  <div class="card"><h3 style="margin-top:0">Send to the Registry</h3>
+    <p class="sub">One ZIP for entering this building in the RHFAC Registry: a page with every score, description, N/A explanation and comment in Registry order with copy buttons, and photos in one folder per element.</p>
+    <button class="btn" id="regPack" type="button">Registry entry pack (ZIP)</button></div>
   <div class="card"><h3 style="margin-top:0">Back up &amp; export</h3>
     <div class="row">
       <button class="btn" id="bkFull" type="button">Backup with photos</button>

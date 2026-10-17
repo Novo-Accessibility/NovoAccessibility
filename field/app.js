@@ -3,7 +3,7 @@
 (function () {
 'use strict';
 
-var VERSION = '3.0.3';
+var VERSION = '3.1.0';
 var SV, ST;                 // survey + standards data
 var S;                      // app state
 var DB;                     // IndexedDB handle
@@ -213,6 +213,22 @@ function itemCheckState(f, n) {
   });
   return { worst: worst, n: cnt };
 }
+function regIssues(f, it) {
+  // What the RHFAC Registry would refuse on submit (Registry User Guide for Professionals, pp. 5-8)
+  var st = ist(f, it.n), out = [];
+  if (!live(f, it)) return out;
+  if (st.na) { if (!(st.naWhy || '').trim()) out.push('N/A needs an explanation'); return out; }
+  if (!scored(f, it)) return out;
+  if (!(st.note || '').trim()) out.push('Feature description missing');
+  if (it.sub === '12.2' && earned(f, it) > 0 && !(st.url || '').trim()) out.push('Website URL missing');
+  return out;
+}
+function elemPhotos(f, sub) {
+  var n = 0;
+  SV.items.forEach(function (i) { if (i.sub === sub) n += ((ist(f, i.n).photos) || []).length; });
+  return n;
+}
+var PHOTO_LIMIT = 30;
 function conflict(f, it) {
   var st = ist(f, it.n);
   if (st.na || st.pts == null || st.pts < it.p) return false;
@@ -333,6 +349,7 @@ function filtered() {
     if (fs === 'short' && (st.na || st.pts == null || st.pts >= it.p || it.kind)) return false;
     if (fs === 'checks' && !checksFor(it.n).length) return false;
     if (fs === 'conflict' && !conflict(f, it)) return false;
+    if (fs === 'registry' && !regIssues(f, it).length) return false;
     if (q) {
       var hay = (it.n + ' ' + it.t + ' ' + refsFor(it.n).join(' ') + ' ' + checksFor(it.n).map(function (p) { return p[1].cl + ' ' + p[1].label; }).join(' ')).toLowerCase();
       if (hay.indexOf(q) < 0) return false;
@@ -389,6 +406,7 @@ function itemEl(it) {
   else if (cs.worst === 'fail') flag = '<span class="flag fail">Below B651/B652</span>';
   else if (cs.worst === 'warn') flag = '<span class="flag warn">Check profile</span>';
   else if (cs.worst === 'ok') flag = '<span class="flag ok">Measurements meet</span>';
+  if (st.na && !(st.naWhy || '').trim()) flag += ' <span class="flag warn">N/A needs explanation</span>';
   var pnote = it.pnote ? ' <span class="flag warn" title="' + esc(it.pnote) + '">Points per Handbook</span>' : '';
   d.innerHTML = '<div class="itop"><span class="inum">' + esc(it.n) + '</span><span class="ititle">' + esc(it.t) + pnote + ' ' + flag + '</span>' +
     '<span class="ipts">' + (it.kind ? '' : earnedLabel(f, it)) + it.p + ' pt' + (it.p === 1 ? '' : 's') + '</span></div>' + refLine(it);
@@ -401,9 +419,9 @@ function itemEl(it) {
     var nb = pbtn(it, 'na', 'N/A', !!st.na); if (noNA) { nb.disabled = true; nb.title = 'The Handbook says this feature must be rated'; }
     pts.appendChild(nb);
   }
-  var tg = el('button', 'tog', open[it.n] ? 'Close ▴' : 'Measure &amp; notes ▾'); tg.type = 'button';
+  var tg = el('button', 'tog', open[it.n] ? 'Close ▴' : 'Details ▾'); tg.type = 'button';
   tg.setAttribute('aria-expanded', String(!!open[it.n]));
-  tg.onclick = function () { open[it.n] = !open[it.n]; var n = itemEl(it); d.replaceWith(n); };
+  tg.onclick = function () { open[it.n] = !open[it.n]; var live = $('it_' + it.n.replace(/\./g, '_')) || d; live.replaceWith(itemEl(it)); };
   pts.appendChild(tg);
   d.appendChild(pts);
   if (open[it.n]) d.appendChild(detailEl(it));
@@ -416,9 +434,10 @@ function pbtn(it, val, lab, on) {
   b.setAttribute('aria-label', it.n + ' ' + (val === 'na' ? 'not applicable' : lab + ' points'));
   b.onclick = function () {
     var f = cur(), s = f.items[it.n] = f.items[it.n] || {};
-    if (val === 'na') { s.na = !s.na; if (s.na) s.pts = null; }
+    if (val === 'na') { s.na = !s.na; if (s.na) { s.pts = null; open[it.n] = true; } }
     else { s.na = false; s.pts = (s.pts === val) ? null : val; }
     save(); refreshItem(it); renderProgress();
+    if (val === 'na' && s.na) setTimeout(function () { var x = document.querySelector('#it_' + it.n.replace(/\./g, '_') + ' [data-f="naWhy"]'); if (x) x.focus(); }, 30);
   };
   return b;
 }
@@ -527,10 +546,26 @@ function detailEl(it) {
   if (it.pnote) w.appendChild(el('div', 'note', '<b>Point value.</b> ' + esc(it.pnote)));
   if (it.tnote) w.appendChild(el('div', 'note', '<b>Wording.</b> ' + esc(it.tnote)));
   // ---- notes, cost, location, photos
-  var ns = el('div', 'sect'); ns.appendChild(el('h4', '', 'Findings'));
+  var ns = el('div', 'sect'); ns.appendChild(el('h4', '', 'Registry entry'));
+  var reg = el('div', 'dgrid');
+  reg.innerHTML =
+    (st.na ? '<label class="fld full"><span>N/A explanation — required by the Registry</span><textarea data-f="naWhy" placeholder="Why this feature does not apply at this site">' + esc(st.naWhy || '') + '</textarea></label>' : '') +
+    '<label class="fld full"><span>Feature description — the client sees this; required for every feature</span><textarea data-f="note" placeholder="What you saw and why it earned this score">' + esc(st.note || '') + '</textarea></label>' +
+    '<label class="fld full"><span>Comment for the adjudicator — the client does not see this</span><textarea data-f="comment" placeholder="Optional">' + esc(st.comment || '') + '</textarea></label>';
+  reg.querySelectorAll('[data-f]').forEach(function (inp) {
+    var k = inp.dataset.f;
+    inp.oninput = function () { st[k] = inp.value; save(); };
+    if (k === 'naWhy') inp.oninput = function () {
+      st[k] = inp.value; save();
+      var head = $('it_' + it.n.replace(/\./g, '_')), fl = head && [].filter.call(head.querySelectorAll('.ititle .flag'), function (x) { return x.textContent === 'N/A needs explanation'; })[0];
+      if (inp.value.trim() && fl) fl.remove();
+      else if (!inp.value.trim() && !fl && head) head.querySelector('.ititle').appendChild(el('span', 'flag warn', 'N/A needs explanation'));
+    };
+  });
+  ns.appendChild(reg); w.appendChild(ns);
+  ns = el('div', 'sect'); ns.appendChild(el('h4', '', 'Location, cost and photos'));
   var g = el('div', 'dgrid');
   g.innerHTML =
-    '<textarea class="full" data-f="note" placeholder="Rating rationale / finding (what you saw and why this score)">' + esc(st.note || '') + '</textarea>' +
     (it.n === '12.2.1' || it.sub === '12.2' ? '<input class="full" type="url" data-f="url" placeholder="Website URL (required for 12.2 bonus points)" value="' + esc(st.url || '') + '">' : '') +
     '<select data-f="floor" aria-label="Floor">' + ['', 'Site approach', 'Lower floor', 'Main floor', 'Upper floor', 'Other floor', 'Whole building'].map(function (o) { return '<option value="' + o + '"' + ((st.floor || '') === o ? ' selected' : '') + '>' + (o || 'Floor…') + '</option>'; }).join('') + '</select>' +
     '<input type="text" data-f="room" placeholder="Room or area" value="' + esc(st.room || '') + '">' +
@@ -541,7 +576,7 @@ function detailEl(it) {
     '<label class="cbox full"><input type="checkbox" data-f="life"' + (st.life ? ' checked' : '') + '> Life-safety item</label>' +
     '<label class="cbox full"><input type="checkbox" data-f="prereq"' + (st.prereq ? ' checked' : '') + '> Affects a certification prerequisite</label>' +
     '<label class="full" style="font-size:.82rem;color:var(--muted)">Photos <input type="file" accept="image/*" capture="environment" multiple data-f="photo" style="font-size:14px"></label>' +
-    '<div class="photos full"></div>';
+    '<div class="photos full"></div><div class="full phcount" style="font-size:.78rem;color:var(--muted)"></div>';
   g.querySelectorAll('[data-f]').forEach(function (inp) {
     var k = inp.dataset.f;
     if (k === 'photo') { inp.onchange = function (e) { addPhotos(it, [].slice.call(e.target.files), function () { drawPhotos(); }); inp.value = ''; }; return; }
@@ -550,6 +585,9 @@ function detailEl(it) {
   ns.appendChild(g); w.appendChild(ns);
   function drawPhotos() {
     var box = g.querySelector('.photos'); box.innerHTML = '';
+    var n = elemPhotos(f, it.sub), pc2 = g.querySelector('.phcount');
+    pc2.innerHTML = 'Photos for element ' + esc(it.sub) + ': <b>' + n + ' of ' + PHOTO_LIMIT + '</b> (the Registry attaches photos per element, up to ' + PHOTO_LIMIT + ').' +
+      (n > PHOTO_LIMIT ? ' <span style="color:var(--coral-deep);font-weight:700">Over the Registry limit — remove ' + (n - PHOTO_LIMIT) + '.</span>' : '');
     (st.photos || []).forEach(function (id, i) {
       var ph = el('span', 'ph'), img = el('img'); img.alt = 'Photo ' + (i + 1) + ' for ' + it.n;
       thumb(id).then(function (u) { if (u) img.src = u; });
@@ -636,6 +674,33 @@ function renderScore() {
     ' full points but a measurement below B651/B652:23.</b> Handbook 2.4.1 says these are generally not eligible for maximum points. ' +
     cf.map(function (it) { return '<a href="#" data-n="' + it.n + '">' + it.n + '</a>'; }).join(', ') + '</div>' : '';
   $('conflicts').querySelectorAll('a').forEach(function (a) { a.onclick = function (e) { e.preventDefault(); jumpTo(a.dataset.n); }; });
+  renderReady();
+}
+function readiness(f) {
+  var miss = { desc: [], na: [], url: [] }, over = [], unscored = 0, subs = {};
+  SV.items.forEach(function (it) {
+    if (!live(f, it)) return;
+    if (!scored(f, it)) unscored++;
+    regIssues(f, it).forEach(function (m) { (m.indexOf('N/A') === 0 ? miss.na : m.indexOf('URL') >= 0 ? miss.url : miss.desc).push(it.n); });
+    subs[it.sub] = 1;
+  });
+  Object.keys(subs).forEach(function (s) { var n = elemPhotos(f, s); if (n > PHOTO_LIMIT) over.push(s + ' (' + n + ')'); });
+  return { miss: miss, over: over, unscored: unscored, total: miss.desc.length + miss.na.length + miss.url.length + over.length };
+}
+function renderReady() {
+  var host = $('ready'); if (!host) return;
+  var r = readiness(cur());
+  function links(a) { return a.slice(0, 12).map(function (n) { return '<a href="#" data-n="' + n + '">' + n + '</a>'; }).join(', ') + (a.length > 12 ? ' and ' + (a.length - 12) + ' more' : ''); }
+  var rows = [];
+  if (r.unscored) rows.push('<li>' + r.unscored + ' applicable feature' + (r.unscored === 1 ? '' : 's') + ' not yet scored or marked N/A</li>');
+  if (r.miss.desc.length) rows.push('<li>' + r.miss.desc.length + ' scored without a feature description: ' + links(r.miss.desc) + '</li>');
+  if (r.miss.na.length) rows.push('<li>' + r.miss.na.length + ' N/A without an explanation: ' + links(r.miss.na) + '</li>');
+  if (r.miss.url.length) rows.push('<li>' + r.miss.url.length + ' website item' + (r.miss.url.length === 1 ? '' : 's') + ' without the URL: ' + links(r.miss.url) + '</li>');
+  if (r.over.length) rows.push('<li>Elements over ' + PHOTO_LIMIT + ' photos: ' + esc(r.over.join(', ')) + '</li>');
+  host.innerHTML = '<h3 style="margin-top:0">Ready for the Registry?</h3>' + (rows.length ?
+    '<p class="sub">The Registry refuses a submission until these are fixed.</p><ul style="margin:0;padding-left:20px;font-size:.88rem">' + rows.join('') + '</ul>' :
+    '<p class="sub" style="margin:0"><b style="color:var(--ok)">Ready.</b> Every scored feature has a description, every N/A has an explanation and no element is over the photo limit.</p>');
+  host.querySelectorAll('a').forEach(function (x) { x.onclick = function (e) { e.preventDefault(); jumpTo(x.dataset.n); }; });
 }
 
 /* ================= remediation ================= */
@@ -754,26 +819,26 @@ function findings(f) {
   SV.items.forEach(function (it) {
     if (!live(f, it)) return;
     var st = ist(f, it.n);
-    if (!scored(f, it) && !(st.meas && Object.keys(st.meas).length) && !st.note && !(st.photos && st.photos.length)) return;
+    if (!scored(f, it) && !(st.meas && Object.keys(st.meas).length) && !st.note && !st.comment && !(st.photos && st.photos.length)) return;
     var meas = checksFor(it.n).map(function (p) {
       var v = (st.meas || {})[p[0]], r = evalCheck(p[1], v); if (!r) return null;
       var val = typeof v === 'object' ? v.a + '/' + v.b : v;
       return { check: p[1].label, clause: stdName(p[1]) + ' §' + p[1].cl, required: reqText(p[1]), measured: val + (p[1].unit && typeof v !== 'object' ? ' ' + p[1].unit : ''), result: r.s };
     }).filter(Boolean);
     out.push({ item: it.n, category: SV.cats[it.cat], section: SV.subs[it.sub], feature: it.t, max: it.p, points: st.na ? null : earned(f, it), na: !!st.na, bonus: !!it.bonus,
-      measurements: meas, note: st.note || '', url: st.url || '', floor: st.floor || '', room: st.room || '', costLow: +st.costLo || null, costHigh: +st.costHi || null,
+      measurements: meas, description: st.note || '', naExplanation: st.naWhy || '', adjudicatorComment: st.comment || '', note: st.note || '', url: st.url || '', floor: st.floor || '', room: st.room || '', costLow: +st.costLo || null, costHigh: +st.costHi || null,
       lifeSafety: !!st.life, prerequisite: !!st.prereq, phase: st.phase || '', sameWorkAs: st.with || '', photos: (st.photos || []).length,
       fullButFails: conflict(f, it) });
   });
   return out;
 }
 function exportCsv() {
-  var rows = [['Building', 'Item', 'Category', 'Section', 'Feature', 'Max', 'Points', 'N/A', 'Measurements', 'Fails CSA', 'Note', 'Floor', 'Room', 'Cost low', 'Cost high', 'Life safety', 'Prerequisite', 'Phase', 'Same work as']];
+  var rows = [['Building', 'Item', 'Category', 'Section', 'Feature', 'Max', 'Points', 'N/A', 'Measurements', 'Fails CSA', 'Feature description', 'N/A explanation', 'Adjudicator comment', 'Floor', 'Room', 'Cost low', 'Cost high', 'Life safety', 'Prerequisite', 'Phase', 'Same work as']];
   S.facs.forEach(function (f) {
     findings(f).forEach(function (x) {
       rows.push([f.facility.name, x.item, x.category, x.section, x.feature, x.max, x.points == null ? '' : x.points, x.na ? 'Yes' : '',
         x.measurements.map(function (m) { return m.check + ' ' + m.measured + ' (' + m.clause + ' ' + m.required + ') ' + m.result; }).join(' | '),
-        x.measurements.some(function (m) { return m.result === 'fail'; }) ? 'Yes' : '', x.note.replace(/\n/g, ' '), x.floor, x.room, x.costLow || '', x.costHigh || '', x.lifeSafety ? 'Yes' : '', x.prerequisite ? 'Yes' : '', x.phase, x.sameWorkAs]);
+        x.measurements.some(function (m) { return m.result === 'fail'; }) ? 'Yes' : '', x.description.replace(/\n/g, ' '), x.naExplanation.replace(/\n/g, ' '), x.adjudicatorComment.replace(/\n/g, ' '), x.floor, x.room, x.costLow || '', x.costHigh || '', x.lifeSafety ? 'Yes' : '', x.prerequisite ? 'Yes' : '', x.phase, x.sameWorkAs]);
     });
   });
   dl('field-findings-' + stamp() + '.csv', '﻿' + rows.map(function (r) { return r.map(function (c) { return '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"'; }).join(','); }).join('\r\n'), 'text/csv');
@@ -797,7 +862,7 @@ function printReport() {
     (p.c || p.g ? p.c + ' certification and ' + p.g + ' Gold prerequisites outstanding.' : 'All prerequisites met.') + '</p>' +
     (fa.scope ? '<p><b>Scope:</b> ' + esc(fa.scope) + '</p>' : '') +
     '<table><tr><th>#</th><th>Category</th><th>Earned</th><th>Max</th></tr>' + Object.keys(t.byCat).map(function (c) { return '<tr><td>' + c + '</td><td>' + esc(SV.cats[c]) + '</td><td>' + t.byCat[c].e + '</td><td>' + t.byCat[c].m + '</td></tr>'; }).join('') + '</table>' +
-    '<h2>Features below maximum</h2><table><tr><th>#</th><th>Feature</th><th>Pts</th><th>Measurements</th><th>Finding</th><th>Cost</th></tr>';
+    '<h2>Features below maximum</h2><table><tr><th>#</th><th>Feature</th><th>Pts</th><th>Measurements</th><th>Description</th><th>Cost</th></tr>';
   findings(f).filter(function (x) { return !x.na && x.points != null && x.points < x.max && !x.bonus; }).forEach(function (x) {
     h += '<tr><td>' + x.item + '</td><td>' + esc(x.feature) + (x.lifeSafety ? ' (life safety)' : '') + '</td><td>' + x.points + '/' + x.max + '</td><td>' +
       x.measurements.map(function (m) { return esc(m.check + ': ' + m.measured + ' — ' + m.clause + ' ' + m.required + (m.result === 'fail' ? ' ✗' : m.result === 'ok' ? ' ✓' : ' ⚠')); }).join('<br>') +
@@ -806,6 +871,77 @@ function printReport() {
   h += '</table>';
   $('report').innerHTML = h;
   setTimeout(function () { window.print(); }, 50);
+}
+
+/* ================= Registry entry pack ================= */
+var CRC = (function () { var t = [], c, n, k; for (n = 0; n < 256; n++) { c = n; for (k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8) { var c = 0xFFFFFFFF; for (var i = 0; i < u8.length; i++) c = CRC[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zip(files) {   // files: [{name, data: Uint8Array}] — stored (no compression); photos are already JPEG
+  var parts = [], central = [], off = 0, enc = new TextEncoder();
+  var d = new Date(), dt = ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)), dd = (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate());
+  files.forEach(function (f) {
+    var nm = enc.encode(f.name), crc = crc32(f.data), sz = f.data.length;
+    var h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+    h.setUint16(10, dt, true); h.setUint16(12, dd, true); h.setUint32(14, crc, true); h.setUint32(18, sz, true); h.setUint32(22, sz, true);
+    h.setUint16(26, nm.length, true); h.setUint16(28, 0, true);
+    parts.push(new Uint8Array(h.buffer), nm, f.data);
+    var c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true);
+    c.setUint16(12, dt, true); c.setUint16(14, dd, true); c.setUint32(16, crc, true); c.setUint32(20, sz, true); c.setUint32(24, sz, true);
+    c.setUint16(28, nm.length, true); c.setUint32(42, off, true);
+    central.push(new Uint8Array(c.buffer), nm);
+    off += 30 + nm.length + sz;
+  });
+  var csz = central.reduce(function (s, x) { return s + x.length; }, 0);
+  var e = new DataView(new ArrayBuffer(22));
+  e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, csz, true); e.setUint32(16, off, true);
+  return new Blob(parts.concat(central, [new Uint8Array(e.buffer)]), { type: 'application/zip' });
+}
+function safeName(s) { return String(s).replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, ' ').trim().slice(0, 60); }
+function registryPack() {
+  var f = cur(), t = totals(f), r = readiness(f), enc = new TextEncoder(), files = [], groups = {};
+  SV.items.forEach(function (it) { if (live(f, it) && (scored(f, it) || ((ist(f, it.n).photos) || []).length)) (groups[it.sub] = groups[it.sub] || []).push(it); });
+  var subs = Object.keys(groups).sort(function (a, b) { var A = a.split('.'), B = b.split('.'); return A[0] - B[0] || A[1] - B[1]; });
+  var jobs = [], html = [];
+  subs.forEach(function (s) {
+    var folder = 'photos/' + safeName(s + ' ' + (SV.subs[s] || '')) + '/', k = 0;
+    var block = '<section><h2>' + esc(s + '  ' + (SV.subs[s] || '')) + '</h2>';
+    groups[s].forEach(function (it) {
+      var st = ist(f, it.n), score = st.na ? 'N/A' : (scored(f, it) ? earned(f, it) + ' of ' + it.p : 'not scored');
+      var names = [];
+      (st.photos || []).forEach(function (id, i) { var nm = folder + safeName(it.n) + '_' + (i + 1) + '.jpg'; names.push(nm.split('/').pop()); jobs.push([id, nm]); k++; });
+      block += '<article><h3>' + esc(it.n + '  ' + it.t) + '</h3><p class="score">Score: <b>' + esc(score) + '</b></p>' +
+        (st.na ? field('N/A explanation', st.naWhy) : '') + (!st.na || st.note ? field('Feature description', st.note) : '') + (st.comment ? field('Comment for the adjudicator', st.comment) : '') +
+        (st.url ? field('Website URL', st.url) : '') + (names.length ? '<p class="ph">Photos: ' + esc(names.join(', ')) + '</p>' : '') + '</article>';
+    });
+    html.push(block + '<p class="ph">Upload the photos in <b>' + esc(folder) + '</b> to this element (' + k + ' of ' + PHOTO_LIMIT + ').</p></section>');
+  });
+  function field(lab, v) {
+    v = v || '';
+    return '<div class="fld"><div class="lab">' + esc(lab) + '</div><div class="row"><div class="val">' + (v ? esc(v) : '<i>empty</i>') + '</div>' +
+      (v ? '<button type="button" data-copy>Copy</button>' : '') + '</div></div>';
+  }
+  var issues = r.total ? '<p class="warn"><b>' + r.total + ' item' + (r.total === 1 ? '' : 's') + ' the Registry will refuse</b> — fix these in the field tool first (Score tab, "Ready for the Registry?").</p>' : '';
+  var page = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Registry entry — ' + esc(f.facility.name || 'Site') + '</title>' +
+    '<style>body{font:15px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;max-width:900px;margin:0 auto;padding:16px;color:#16283A}h1{font-size:1.3rem}h2{background:#1A3A5C;color:#fff;padding:8px 12px;border-radius:8px;font-size:1rem;margin-top:28px}' +
+    'article{border:1px solid #D3DCE5;border-radius:10px;padding:10px 12px;margin:8px 0}h3{font-size:.95rem;margin:0 0 4px}.score{margin:0 0 6px}.lab{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#4E6575;margin-top:6px}' +
+    '.row{display:flex;gap:8px;align-items:flex-start}.val{flex:1;white-space:pre-wrap;background:#F5F7FA;border-radius:6px;padding:6px 8px}button{border:1.5px solid #0A6257;color:#0A6257;background:#fff;border-radius:6px;padding:5px 10px;font-weight:700;cursor:pointer}' +
+    'button.done{background:#0A6257;color:#fff}.ph{font-size:.82rem;color:#4E6575}.warn{background:#FBE9E2;border-left:4px solid #B24A2C;padding:10px 12px;border-radius:0 8px 8px 0}</style></head><body>' +
+    '<h1>Registry entry — ' + esc(f.facility.name || 'Site') + '</h1><p>Rating score ' + pc(t.earned, t.max) + ' (' + t.earned + ' of ' + t.max + ' applicable points). Enter each element in the RHFAC Registry Rating Survey in this order: copy each field, then upload that element\'s photo folder.</p>' +
+    issues + html.join('') +
+    '<script>document.querySelectorAll("[data-copy]").forEach(function(b){b.onclick=function(){var t=b.previousElementSibling.innerText;function ok(){b.textContent="Copied";b.classList.add("done");}' +
+    'if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(t).then(ok,fb)}else fb();function fb(){var x=document.createElement("textarea");x.value=t;document.body.appendChild(x);x.select();try{document.execCommand("copy");ok()}catch(e){}x.remove()}}})<\/script></body></html>';
+  files.push({ name: 'registry-entry.html', data: enc.encode(page) });
+  var csv = [['Element', 'Item', 'Feature', 'Score', 'Max', 'N/A', 'N/A explanation', 'Feature description', 'Comment for the adjudicator', 'Website URL', 'Photos']];
+  subs.forEach(function (s) { groups[s].forEach(function (it) { var st = ist(f, it.n); csv.push([s, it.n, it.t, st.na ? '' : (scored(f, it) ? earned(f, it) : ''), it.p, st.na ? 'Yes' : '', st.naWhy || '', st.note || '', st.comment || '', st.url || '', (st.photos || []).length]); }); });
+  files.push({ name: 'registry-entry.csv', data: enc.encode('\ufeff' + csv.map(function (r) { return r.map(function (c) { return '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"'; }).join(','); }).join('\r\n')) });
+  return Promise.all(jobs.map(function (j) {
+    return photoGet(j[0]).then(function (rec) { return rec ? rec.blob.arrayBuffer().then(function (b) { files.push({ name: j[1], data: new Uint8Array(b) }); }) : null; });
+  })).then(function () {
+    dl('registry-entry-' + safeName(f.facility.name || 'site').replace(/ /g, '-') + '-' + stamp() + '.zip', zip(files));
+    toast(r.total ? 'Pack downloaded — ' + r.total + ' item(s) still need fixing' : 'Registry pack downloaded');
+  });
 }
 
 /* ================= storage info / backup nag ================= */
@@ -873,7 +1009,7 @@ function wire() {
   $('bkFull').onclick = function () { backup(true); };
   $('lockBtn').onclick = lockDevice;
   $('bkData').onclick = function () { backup(false); };
-  $('expCsv').onclick = exportCsv; $('expJson').onclick = exportJson; $('doPrint').onclick = printReport;
+  $('expCsv').onclick = exportCsv; $('regPack').onclick = registryPack; $('expJson').onclick = exportJson; $('doPrint').onclick = printReport;
   $('impFile').onchange = function (e) { if (e.target.files[0]) restore(e.target.files[0]); e.target.value = ''; };
   $('clearAll').onclick = function () {
     if (!confirm('Clear every building and photo on this device? This cannot be undone.')) return;
