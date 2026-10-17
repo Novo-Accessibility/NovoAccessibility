@@ -3,7 +3,7 @@
 (function () {
 'use strict';
 
-var VERSION = '3.1.0';
+var VERSION = '3.2.0';
 var SV, ST;                 // survey + standards data
 var S;                      // app state
 var DB;                     // IndexedDB handle
@@ -470,12 +470,12 @@ function detailEl(it) {
       var v = st.meas[k];
       if (c.type === 'contrast' || c.type === 'parkcount') {
         var pa = c.type === 'contrast' ? ['LRV light', 'LRV dark'] : ['Total spaces', 'Accessible'];
-        row.innerHTML = lab + '<div class="pair"><input type="number" inputmode="decimal" placeholder="' + pa[0] + '" aria-label="' + pa[0] + '" value="' + esc(v && v.a) + '"><input type="number" inputmode="decimal" placeholder="' + pa[1] + '" aria-label="' + pa[1] + '" value="' + esc(v && v.b) + '"></div><div class="res"></div>';
+        row.innerHTML = lab + '<div class="pair"><input type="text" inputmode="decimal" data-num="dec" autocomplete="off" placeholder="' + pa[0] + '" aria-label="' + pa[0] + '" value="' + esc(v && v.a) + '"><input type="text" inputmode="decimal" data-num="dec" autocomplete="off" placeholder="' + pa[1] + '" aria-label="' + pa[1] + '" value="' + esc(v && v.b) + '"></div><div class="res"></div>';
         var ins = row.querySelectorAll('input');
         var upd2 = function () { st.meas[k] = { a: ins[0].value, b: ins[1].value }; if (!ins[0].value && !ins[1].value) delete st.meas[k]; save(); showRes(); };
         ins[0].oninput = ins[1].oninput = upd2;
       } else {
-        row.innerHTML = lab + '<input type="number" inputmode="decimal" step="any" placeholder="' + esc(c.unit) + '" aria-label="' + esc(c.label + ' in ' + c.unit) + '" value="' + esc(v) + '"><div class="res"></div>';
+        row.innerHTML = lab + '<input type="text" inputmode="decimal" data-num="dec" autocomplete="off" placeholder="' + esc(c.unit) + '" aria-label="' + esc(c.label + ' in ' + c.unit) + '" value="' + esc(v) + '"><div class="res"></div>';
         var inp = row.querySelector('input');
         inp.oninput = function () { if (inp.value === '') delete st.meas[k]; else st.meas[k] = inp.value; save(); showRes(); };
       }
@@ -569,8 +569,8 @@ function detailEl(it) {
     (it.n === '12.2.1' || it.sub === '12.2' ? '<input class="full" type="url" data-f="url" placeholder="Website URL (required for 12.2 bonus points)" value="' + esc(st.url || '') + '">' : '') +
     '<select data-f="floor" aria-label="Floor">' + ['', 'Site approach', 'Lower floor', 'Main floor', 'Upper floor', 'Other floor', 'Whole building'].map(function (o) { return '<option value="' + o + '"' + ((st.floor || '') === o ? ' selected' : '') + '>' + (o || 'Floor…') + '</option>'; }).join('') + '</select>' +
     '<input type="text" data-f="room" placeholder="Room or area" value="' + esc(st.room || '') + '">' +
-    '<input type="number" inputmode="numeric" data-f="costLo" placeholder="Est. cost low $" value="' + esc(st.costLo || '') + '">' +
-    '<input type="number" inputmode="numeric" data-f="costHi" placeholder="Est. cost high $" value="' + esc(st.costHi || '') + '">' +
+    '<input type="text" inputmode="numeric" data-num="int" autocomplete="off" data-f="costLo" placeholder="Est. cost low $" value="' + esc(st.costLo || '') + '">' +
+    '<input type="text" inputmode="numeric" data-num="int" autocomplete="off" data-f="costHi" placeholder="Est. cost high $" value="' + esc(st.costHi || '') + '">' +
     '<select data-f="phase" aria-label="Phase">' + [['', 'Phase: automatic'], ['0', 'Phase 0 — immediate'], ['1', 'Phase 1 — Year 1'], ['2', 'Phase 2 — Year 2'], ['-', 'Not scheduled']].map(function (o) { return '<option value="' + o[0] + '"' + ((st.phase || '') === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>' +
     '<input type="text" data-f="with" placeholder="Same work as item #" value="' + esc(st.with || '') + '">' +
     '<label class="cbox full"><input type="checkbox" data-f="life"' + (st.life ? ' checked' : '') + '> Life-safety item</label>' +
@@ -1009,7 +1009,18 @@ function wire() {
   $('bkFull').onclick = function () { backup(true); };
   $('lockBtn').onclick = lockDevice;
   $('bkData').onclick = function () { backup(false); };
-  $('expCsv').onclick = exportCsv; $('regPack').onclick = registryPack; $('expJson').onclick = exportJson; $('doPrint').onclick = printReport;
+  $('expCsv').onclick = exportCsv; $('regPack').onclick = registryPack;
+  $('regUpload').onclick = function () {
+    var r = readiness(cur()), out = $('regUploadMsg');
+    if (r.unscored || r.total) {
+      out.className = 'warnbox';
+      out.innerHTML = '<b>Not ready to upload.</b> ' + (r.unscored ? r.unscored + ' feature(s) not yet scored or marked N/A. ' : '') +
+        (r.total ? r.total + ' item(s) the Registry would refuse. ' : '') + 'See the Score tab, "Ready for the Registry?".';
+    } else {
+      out.className = 'note';
+      out.innerHTML = '<b>This rating is complete and passes every Registry check.</b> Sending it needs a connection the RHFAC Registry does not offer yet. Once RHF enables one, this button signs in with the assessor\'s Registry account and sends every score, description, N/A explanation, comment and photo to their assigned rating as a draft, ready to review and submit. Until then, use the Registry entry pack below.';
+    }
+  }; $('expJson').onclick = exportJson; $('doPrint').onclick = printReport;
   $('impFile').onchange = function (e) { if (e.target.files[0]) restore(e.target.files[0]); e.target.value = ''; };
   $('clearAll').onclick = function () {
     if (!confirm('Clear every building and photo on this device? This cannot be undone.')) return;
@@ -1023,6 +1034,23 @@ function wire() {
     esc(ST.meta.title + ', ' + ST.meta.name) + ' and ' + esc(ST.meta.b652) + ' — clause numbers and numeric requirements only.</p><p>' + esc(SV.meta.scoring) + '</p>' +
     '<p>Rick Hansen Foundation and CSA Group content is copyright of its owners. This tool is a field aid and does not certify sites.</p><p style="color:var(--muted)">Field Rating Tool ' + VERSION + '</p>';
 }
+
+/* ================= numbers-only fields ================= */
+function cleanNum(v, kind) {
+  v = String(v).replace(',', '.');
+  if (kind === 'int') return v.replace(/[^0-9]/g, '');
+  v = v.replace(/[^0-9.]/g, '');
+  var i = v.indexOf('.');
+  return i < 0 ? v : v.slice(0, i + 1) + v.slice(i + 1).replace(/\./g, '');
+}
+document.addEventListener('beforeinput', function (e) {
+  var t = e.target; if (!t || !t.dataset || !t.dataset.num || !e.data) return;
+  if (cleanNum(e.data, t.dataset.num) !== e.data.replace(',', '.')) { e.preventDefault(); toast('Numbers only'); }
+}, true);
+document.addEventListener('input', function (e) {
+  var t = e.target; if (!t || !t.dataset || !t.dataset.num) return;
+  var c = cleanNum(t.value, t.dataset.num); if (c !== t.value) { t.value = c; }
+}, true);
 
 /* ================= boot ================= */
 try { var th = localStorage.getItem('field-theme'); if (th) document.documentElement.setAttribute('data-theme', th); } catch (e) {}

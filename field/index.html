@@ -310,7 +310,11 @@ td{padding:8px;border-bottom:1px solid var(--border);vertical-align:top;}
   <h2>Data</h2>
   <p class="sub">Everything stays on this device. Nothing is uploaded.</p>
   <div class="card"><h3 style="margin-top:0">Storage</h3><p class="sub" id="storeInfo">Checking…</p><p class="sub" id="backupInfo"></p></div>
-  <div class="card"><h3 style="margin-top:0">Send to the Registry</h3>
+  <div class="card"><h3 style="margin-top:0">Upload to the RHFAC Registry</h3>
+    <p class="sub">Checks that every applicable feature is scored or marked N/A, every scored feature has a description and every N/A has an explanation, then sends the finished rating to the Registry.</p>
+    <button class="btn" id="regUpload" type="button">Upload to RHFAC Registry</button>
+    <div id="regUploadMsg" role="status"></div></div>
+  <div class="card"><h3 style="margin-top:0">Registry entry pack</h3>
     <p class="sub">One ZIP for entering this building in the RHFAC Registry: a page with every score, description, N/A explanation and comment in Registry order with copy buttons, and photos in one folder per element.</p>
     <button class="btn" id="regPack" type="button">Registry entry pack (ZIP)</button></div>
   <div class="card"><h3 style="margin-top:0">Back up &amp; export</h3>
